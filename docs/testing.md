@@ -8,6 +8,8 @@ python scripts/check.py
 
 Use `python scripts/check.py --skip-build` while iterating locally.
 Use `python scripts/check.py links` after editing local Markdown links.
+Use `python scripts/check.py cli-examples` after editing documented dry-run CLI
+examples.
 
 Install pre-commit hooks for faster feedback:
 

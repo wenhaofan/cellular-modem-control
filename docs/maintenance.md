@@ -27,6 +27,11 @@ Local Markdown links are checked with `scripts/check_links.py`. It validates
 relative links in README, root Markdown files, docs, GitHub Markdown templates,
 and bundled skill Markdown without requiring network access.
 
+Documented dry-run CLI examples are checked with `scripts/check_cli_examples.py`.
+It executes only examples that explicitly include `--dry-run`, using the local
+Python module instead of the `modemctl` console script, so the check does not
+open a serial port.
+
 Run a focused bundled-skill metadata check with:
 
 ```bash

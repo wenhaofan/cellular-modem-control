@@ -24,6 +24,7 @@ SOURCE_REQUIRED = [
     "docs/skills.md",
     "examples/read_only_smoke.py",
     "scripts/check.py",
+    "scripts/check_cli_examples.py",
     "scripts/check_docs_safety.py",
     "scripts/check_install.py",
     "scripts/check_links.py",
