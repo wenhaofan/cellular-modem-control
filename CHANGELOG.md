@@ -18,5 +18,6 @@ versioning once public releases begin.
 - Read-only `modemctl smoke` hardware validation report with default identifier
   redaction.
 - Markdown smoke report output for issue attachments.
+- Public serial port discovery API and runnable Python examples.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.

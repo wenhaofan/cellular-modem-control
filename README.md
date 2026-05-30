@@ -58,6 +58,7 @@ alias.
 - [Architecture](docs/architecture.md)
 - [CLI reference](docs/cli.md)
 - [Python API](docs/api.md)
+- [Examples](docs/examples.md)
 - [Hardware notes](docs/hardware.md)
 - [Profiles](docs/profiles.md)
 - [Testing](docs/testing.md)

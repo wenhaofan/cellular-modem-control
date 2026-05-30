@@ -9,6 +9,7 @@ from cellular_modem import cli
 from cellular_modem.at import ATResponse
 from cellular_modem.cli import _default_port, _normalize, build_parser, main
 from cellular_modem.modem import CallInfo, SMSMessage
+from cellular_modem.ports import SerialPortInfo
 
 
 class CLITests(unittest.TestCase):
@@ -50,6 +51,19 @@ class CLITests(unittest.TestCase):
 
         self.assertEqual(result, 2)
         self.assertIn("usage: modemctl", output.getvalue())
+
+    def test_ports_handler_uses_public_port_discovery(self):
+        args = args_for(json=False)
+        fake_ports = [SerialPortInfo(device="COM8", description="USB Serial Port", hwid="USB")]
+
+        with patch("cellular_modem.cli.list_serial_ports", return_value=fake_ports) as list_ports:
+            output = io.StringIO()
+            with redirect_stdout(output):
+                result = cli.cmd_ports(args)
+
+        self.assertEqual(result, 0)
+        list_ports.assert_called_once_with()
+        self.assertIn("COM8", output.getvalue())
 
     def test_read_only_handlers_use_open_modem(self):
         fake = FakeCliModem()

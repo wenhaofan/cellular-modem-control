@@ -42,6 +42,9 @@ modemctl --port COM8 raw "ATI"
 `signal`, and `raw "ATI"`, and returns a structured report. It redacts sensitive
 identifiers by default. Use `--show-sensitive` only for private local debugging.
 
+`ports` uses the same serial port discovery API exposed as
+`cellular_modem.list_serial_ports()`.
+
 For issue reports, prefer Markdown:
 
 ```bash

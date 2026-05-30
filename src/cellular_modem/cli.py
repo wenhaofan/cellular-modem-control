@@ -12,6 +12,7 @@ from typing import Any
 
 from .at import ATError, ATTimeout
 from .modem import Modem
+from .ports import list_serial_ports
 from .profiles import PROFILES
 from .smoke import report_to_dict, report_to_markdown, run_read_only_smoke
 
@@ -118,19 +119,7 @@ def _add(subparsers, name: str, handler, help_text: str):
 
 
 def cmd_ports(args) -> int:
-    try:
-        from serial.tools import list_ports
-    except ImportError as exc:
-        raise RuntimeError("pyserial is required: python -m pip install pyserial") from exc
-    ports = [
-        {
-            "device": port.device,
-            "description": port.description,
-            "hwid": port.hwid,
-        }
-        for port in list_ports.comports()
-    ]
-    _print(ports, args.json)
+    _print(list_serial_ports(), args.json)
     return 0
 
 

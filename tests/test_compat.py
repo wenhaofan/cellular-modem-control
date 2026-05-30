@@ -5,6 +5,7 @@ import quectel_modem
 import quectel_modem.at
 import quectel_modem.cli
 import quectel_modem.encoding
+import quectel_modem.ports
 import quectel_modem.profiles
 import quectel_modem.smoke
 
@@ -21,6 +22,7 @@ class CompatibilityTests(unittest.TestCase):
     def test_compatibility_modules_import(self):
         self.assertIs(quectel_modem.cli.main, cellular_modem.cli.main)
         self.assertIs(quectel_modem.profiles.get_profile, cellular_modem.get_profile)
+        self.assertIs(quectel_modem.ports.list_serial_ports, cellular_modem.list_serial_ports)
         self.assertIs(quectel_modem.smoke.run_read_only_smoke, cellular_modem.run_read_only_smoke)
 
 

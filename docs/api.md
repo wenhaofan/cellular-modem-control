@@ -3,7 +3,10 @@
 The public package is `cellular_modem`.
 
 ```python
-from cellular_modem import Modem
+from cellular_modem import Modem, list_serial_ports
+
+for port in list_serial_ports():
+    print(port.device, port.description)
 
 with Modem(port="COM8", profile="generic") as modem:
     modem.initialize()
@@ -14,6 +17,7 @@ with Modem(port="COM8", profile="generic") as modem:
 ## Main Classes
 
 - `SerialTransport`: pyserial-backed byte and line I/O.
+- `SerialPortInfo`: serial port metadata returned by `list_serial_ports()`.
 - `ATClient`: synchronous AT command/response client.
 - `Modem`: high-level SMS, call, signal, SIM, raw command, and event API.
 - `ModemProfile`: command profile for standard and vendor-specific behavior.
