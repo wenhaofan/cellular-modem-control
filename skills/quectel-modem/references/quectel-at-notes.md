@@ -13,6 +13,9 @@ layout, and supported proprietary commands.
 - `AT+CPIN?` checks SIM readiness.
 - `AT+CSQ` checks RSSI/BER.
 
+Prefer `modemctl --profile quectel smoke --json` for issue reports and hardware
+validation. It runs only read-only checks and redacts identifiers by default.
+
 ## SMS
 
 - `AT+CMGF=1` selects text mode.

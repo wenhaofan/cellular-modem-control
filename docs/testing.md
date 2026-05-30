@@ -21,10 +21,14 @@ Run only on a machine with a known AT command port:
 
 ```bash
 modemctl ports
+modemctl --port COM8 --profile generic --json smoke
 modemctl --port COM8 --profile generic --json info
 modemctl --port COM8 --profile generic --json sim
 modemctl --port COM8 --profile generic --json signal
 ```
+
+Prefer `smoke` for issue reports because it opens the port once and redacts
+modem identifiers by default.
 
 Do not include state-changing commands in automated CI:
 

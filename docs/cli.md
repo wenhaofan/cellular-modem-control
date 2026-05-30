@@ -31,11 +31,16 @@ These commands are safe for automated smoke checks:
 
 ```bash
 modemctl ports
+modemctl --port COM8 smoke --json
 modemctl --port COM8 info
 modemctl --port COM8 sim
 modemctl --port COM8 signal
 modemctl --port COM8 raw "ATI"
 ```
+
+`smoke` opens the port once, initializes the modem, runs `info`, `sim`,
+`signal`, and `raw "ATI"`, and returns a structured report. It redacts sensitive
+identifiers by default. Use `--show-sensitive` only for private local debugging.
 
 ## SMS Commands
 

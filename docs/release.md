@@ -14,6 +14,12 @@ This project is pre-1.0. Before publishing a release:
    twine check dist/*
    ```
 
+   If a modem is available, also run a read-only smoke check:
+
+   ```bash
+   modemctl --port COM8 --profile generic smoke --json
+   ```
+
 4. Confirm the source distribution contains docs, skills, tests, and CI files:
 
    ```bash

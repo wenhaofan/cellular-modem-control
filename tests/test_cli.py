@@ -18,6 +18,15 @@ class CLITests(unittest.TestCase):
         self.assertEqual(args.command, "signal")
         self.assertTrue(args.json)
 
+    def test_parser_accepts_smoke_show_sensitive(self):
+        parser = build_parser()
+
+        args = parser.parse_args(["--port", "COM8", "smoke", "--show-sensitive", "--json"])
+
+        self.assertEqual(args.command, "smoke")
+        self.assertTrue(args.show_sensitive)
+        self.assertTrue(args.json)
+
     def test_normalize_dataclass_list(self):
         message = SMSMessage(index=1, status="REC READ", sender="+123", timestamp="now", text="hello")
 

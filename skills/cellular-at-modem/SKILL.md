@@ -12,7 +12,8 @@ description: Control local cellular modems over standard AT commands with option
    `python -m cellular_modem.cli ...` with `PYTHONPATH=src`, or the installed
    console script `modemctl ...`.
 2. Probe before changing state:
-   `modemctl ports`, then `modemctl --port COM8 info`, `sim`, and `signal`.
+   `modemctl ports`, then prefer `modemctl --port COM8 smoke --json`. For
+   narrower checks use `info`, `sim`, and `signal`.
 3. Use the `generic` profile first. Switch to a vendor profile only when the
    standard command fails or the user asks for vendor-specific behavior.
 4. Do not send SMS, dial calls, answer calls, hang up calls, delete SMS, or
@@ -34,6 +35,7 @@ Installed CLI examples:
 ```powershell
 modemctl ports
 modemctl --port COM8 --profile generic info
+modemctl --port COM8 --profile generic smoke --json
 modemctl --port COM8 sim
 modemctl --port COM8 signal
 modemctl --port COM8 raw "ATI"

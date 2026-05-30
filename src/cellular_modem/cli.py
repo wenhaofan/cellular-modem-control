@@ -13,6 +13,7 @@ from typing import Any
 from .at import ATError, ATTimeout
 from .modem import Modem
 from .profiles import PROFILES
+from .smoke import report_to_dict, run_read_only_smoke
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -57,6 +58,9 @@ def build_parser() -> argparse.ArgumentParser:
     _add(subparsers, "info", cmd_info, "Show module identity.")
     _add(subparsers, "sim", cmd_sim, "Show SIM PIN/ready status.")
     _add(subparsers, "signal", cmd_signal, "Show signal quality.")
+
+    smoke = _add(subparsers, "smoke", cmd_smoke, "Run read-only hardware smoke checks.")
+    smoke.add_argument("--show-sensitive", action="store_true", help="Do not redact modem identifiers in the report.")
 
     raw = _add(subparsers, "raw", cmd_raw, "Run a raw AT command.")
     raw.add_argument("at_command")
@@ -140,6 +144,19 @@ def cmd_signal(args) -> int:
     with _open_modem(args) as modem:
         _print(modem.signal_quality(), args.json)
     return 0
+
+
+def cmd_smoke(args) -> int:
+    report = run_read_only_smoke(
+        port=args.port,
+        profile=args.profile,
+        baudrate=args.baud,
+        timeout=args.timeout,
+        initialize=not args.no_init,
+        show_sensitive=args.show_sensitive,
+    )
+    _print(report_to_dict(report), args.json)
+    return 0 if report.ok else 1
 
 
 def cmd_raw(args) -> int:

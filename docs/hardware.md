@@ -21,6 +21,15 @@ modemctl --port COM8 info
 modemctl --port /dev/ttyUSB2 info
 ```
 
+For a single read-only validation report:
+
+```bash
+modemctl --port COM8 --profile generic smoke --json
+```
+
+The smoke report redacts modem identifiers by default. Use `--show-sensitive`
+only for private local troubleshooting.
+
 ## Safe Probing
 
 These commands are read-only:
@@ -29,6 +38,7 @@ These commands are read-only:
 - `sim`
 - `signal`
 - `raw "ATI"`
+- `smoke`
 
 These commands can change state or incur carrier charges:
 

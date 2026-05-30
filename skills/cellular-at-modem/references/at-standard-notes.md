@@ -13,6 +13,9 @@ AT command support is layered:
 Prefer a standard command when one exists. Add a profile extension only when a
 module needs a different command or extra setup.
 
+Use `modemctl smoke --json` for issue reports and hardware validation. It runs
+only read-only checks and redacts identifiers by default.
+
 ## Common Core Commands
 
 - `AT` checks command responsiveness.

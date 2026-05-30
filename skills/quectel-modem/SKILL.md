@@ -12,7 +12,8 @@ description: Control local Quectel cellular communication modules over serial AT
    `python -m quectel_modem.cli ...` with `PYTHONPATH=src`, or the installed
    console script `modemctl ...`.
 2. Probe before changing state:
-   `modemctl ports`, then `modemctl --port COM8 info`, `sim`, and `signal`.
+   `modemctl ports`, then prefer `modemctl --port COM8 --profile quectel smoke
+   --json`. For narrower checks use `info`, `sim`, and `signal`.
 3. Do not send SMS, dial calls, answer calls, hang up calls, delete SMS, or
    change audio settings unless the user explicitly requested that action.
 4. Use `--port COM8` for the user's Windows machine unless they provide another
@@ -35,6 +36,7 @@ Installed CLI examples:
 ```powershell
 modemctl ports
 modemctl --port COM8 info
+modemctl --port COM8 --profile quectel smoke --json
 modemctl --port COM8 sim
 modemctl --port COM8 signal
 modemctl --port COM8 raw "ATI"

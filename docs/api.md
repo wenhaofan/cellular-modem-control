@@ -68,3 +68,15 @@ print(response.lines)
 
 Use raw commands for diagnostics and vendor-specific experiments before adding
 profile support.
+
+## Read-Only Smoke Checks
+
+```python
+from cellular_modem import report_to_dict, run_read_only_smoke
+
+report = run_read_only_smoke(port="COM8", profile="generic")
+print(report_to_dict(report))
+```
+
+Smoke checks open the modem once, initialize it, and run only read-only checks.
+Sensitive identifiers are redacted unless `show_sensitive=True` is passed.

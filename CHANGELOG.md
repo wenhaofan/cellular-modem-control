@@ -15,5 +15,7 @@ versioning once public releases begin.
 - CLI command `modemctl` for port listing, module information, SIM status,
   signal quality, SMS, call control, DTMF, audio controls, event monitoring,
   and raw AT commands.
+- Read-only `modemctl smoke` hardware validation report with default identifier
+  redaction.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.
