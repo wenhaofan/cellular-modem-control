@@ -11,6 +11,9 @@ python scripts/check.py
 Use `--skip-build` while iterating when package metadata is not part of the
 change.
 
+The build check creates an sdist and wheel, verifies expected distribution
+contents with `scripts/check_dist.py`, and then runs `twine check`.
+
 Run a focused bundled-skill metadata check with:
 
 ```bash

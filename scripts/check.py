@@ -16,7 +16,11 @@ CHECKS = {
     "ruff": [[sys.executable, "-m", "ruff", "check", "."]],
     "mypy": [[sys.executable, "-m", "mypy"]],
     "skills": [[sys.executable, "scripts/check_skills.py"]],
-    "build": [[sys.executable, "-m", "build"], [sys.executable, "-m", "twine", "check", "dist/*"]],
+    "build": [
+        [sys.executable, "-m", "build"],
+        [sys.executable, "scripts/check_dist.py"],
+        [sys.executable, "-m", "twine", "check", "dist/*"],
+    ],
 }
 
 

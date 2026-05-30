@@ -21,5 +21,7 @@ versioning once public releases begin.
 - Public serial port discovery API and runnable Python examples.
 - `--dry-run` previews for state-changing CLI commands and raw AT commands.
 - Bundled skill metadata validation in the local quality gate.
+- Release workflow for trusted publishing to TestPyPI and PyPI.
+- Distribution content validation for source and wheel artifacts.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.

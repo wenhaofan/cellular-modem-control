@@ -38,8 +38,8 @@ modemctl ports
 modemctl --port COM8 --profile generic smoke --json
 modemctl --port COM8 --profile generic info
 modemctl --port COM8 signal
-modemctl --port COM8 sms-send "+8613800138000" "test"
-modemctl --port COM8 call-dial "+8613800138000"
+modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
+modemctl --port COM8 call-dial "+8613800138000" --dry-run
 modemctl --port COM8 call-hangup
 ```
 
