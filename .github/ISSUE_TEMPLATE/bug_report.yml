@@ -1,0 +1,72 @@
+name: Bug report
+description: Report a reproducible modem, parser, CLI, or packaging issue.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Redact phone numbers, IMSI, ICCID, SMS bodies,
+        and carrier account details before posting logs.
+  - type: input
+    id: version
+    attributes:
+      label: Project version or commit
+      placeholder: "0.1.0 or git commit"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: modem
+    attributes:
+      label: Modem vendor and model
+      placeholder: "Quectel EC600N, SIMCom SIM7600, ..."
+    validations:
+      required: false
+  - type: input
+    id: port
+    attributes:
+      label: AT port
+      placeholder: "COM8, /dev/ttyUSB2, /dev/cu.usbserial-..."
+    validations:
+      required: false
+  - type: textarea
+    id: command
+    attributes:
+      label: Command or API call
+      description: Include the exact command if safe to share.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include redacted output, final AT result, and traceback if present.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: probe
+    attributes:
+      label: Safe probe output
+      description: Optional output from info/sim/signal/raw ATI with sensitive values redacted.
+      render: text
+    validations:
+      required: false

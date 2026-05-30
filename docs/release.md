@@ -14,10 +14,16 @@ This project is pre-1.0. Before publishing a release:
    twine check dist/*
    ```
 
-4. Create a signed git tag:
+4. Confirm the source distribution contains docs, skills, tests, and CI files:
+
+   ```bash
+   python -m tarfile -l dist/cellular_modem_control-0.1.0.tar.gz
+   ```
+
+5. Create a signed git tag:
 
    ```bash
    git tag -s v0.1.0 -m "v0.1.0"
    ```
 
-5. Publish to TestPyPI first, then PyPI after a clean install test.
+6. Publish to TestPyPI first, then PyPI after a clean install test.

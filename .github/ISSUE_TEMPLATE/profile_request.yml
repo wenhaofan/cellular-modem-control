@@ -1,0 +1,46 @@
+name: Modem profile request
+description: Request support for a vendor or model-specific AT behavior.
+title: "[Profile]: "
+labels: ["profile", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for vendor-specific behavior that does not work through the
+        generic AT profile. Redact identifiers and private carrier details.
+  - type: input
+    id: vendor_model
+    attributes:
+      label: Vendor and model
+      placeholder: "Quectel EC600N"
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware revision
+      placeholder: "From AT+CGMR"
+    validations:
+      required: false
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+      description: What should the profile enable?
+    validations:
+      required: true
+  - type: textarea
+    id: standard_behavior
+    attributes:
+      label: Generic profile behavior
+      description: What happens with --profile generic?
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: vendor_command
+    attributes:
+      label: Vendor command reference
+      description: Include public manual links or quoted command names, not proprietary documents.
+    validations:
+      required: false

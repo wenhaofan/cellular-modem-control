@@ -25,3 +25,8 @@ vendor profile only after the exact command is documented for a module family.
 - `ATError` means the modem returned an error final result and the caller asked
   to raise on errors.
 - CLI commands return non-zero for command failures and print errors to stderr.
+
+## Compatibility Layer
+
+`quectel_modem` remains as an import and module alias for early users of the
+Quectel-specific prototype. New code should import from `cellular_modem`.

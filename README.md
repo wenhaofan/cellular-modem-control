@@ -55,8 +55,11 @@ alias.
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [CLI reference](docs/cli.md)
+- [Python API](docs/api.md)
 - [Hardware notes](docs/hardware.md)
 - [Profiles](docs/profiles.md)
+- [Testing](docs/testing.md)
 - [Release process](docs/release.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)

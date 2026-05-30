@@ -32,6 +32,9 @@ mypy
 python -m build
 ```
 
+Use a virtual environment. Installing `.[dev]` into a shared Python environment
+can upgrade linting and packaging dependencies used by unrelated projects.
+
 ## Hardware-Safe Contributions
 
 - Unit tests must not require a real modem by default.
