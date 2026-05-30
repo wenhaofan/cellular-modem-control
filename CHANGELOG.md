@@ -12,6 +12,7 @@ versioning once public releases begin.
 - Generic `cellular_modem` package for standard AT modem operations.
 - Backward-compatible `quectel_modem` import and CLI module aliases.
 - `generic` and `quectel` modem profiles.
+- Compatibility support tiers and hardware validation matrix documentation.
 - CLI command `modemctl` for port listing, module information, SIM status,
   signal quality, SMS, call control, DTMF, audio controls, event monitoring,
   and raw AT commands.

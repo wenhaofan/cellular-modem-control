@@ -19,6 +19,7 @@ SOURCE_REQUIRED = [
     ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/ISSUE_TEMPLATE/profile_request.yml",
     "docs/api.md",
+    "docs/compatibility.md",
     "docs/release.md",
     "docs/skills.md",
     "examples/read_only_smoke.py",

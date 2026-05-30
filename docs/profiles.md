@@ -3,6 +3,9 @@
 Profiles keep the standard modem API stable while allowing vendor-specific
 commands when needed.
 
+See [Compatibility](compatibility.md) for support tiers, current hardware smoke
+coverage, and the standards baseline used by the generic profile.
+
 ## Built-In Profiles
 
 - `generic`: Standard AT commands for broad compatibility.
