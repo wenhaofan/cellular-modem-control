@@ -36,6 +36,7 @@ modemctl --port COM8 info
 modemctl --port COM8 sim
 modemctl --port COM8 signal
 modemctl --port COM8 raw "ATI"
+modemctl --port COM8 raw "AT+CFUN?" --dry-run
 ```
 
 `smoke` opens the port once, initializes the modem, runs `info`, `sim`,
@@ -44,6 +45,10 @@ identifiers by default. Use `--show-sensitive` only for private local debugging.
 
 `ports` uses the same serial port discovery API exposed as
 `cellular_modem.list_serial_ports()`.
+
+Raw AT commands can be read-only or state-changing depending on the command.
+Use `raw --dry-run` when collecting or reviewing command plans before touching
+hardware.
 
 For issue reports, prefer Markdown:
 
@@ -55,19 +60,23 @@ modemctl --port COM8 smoke --format markdown
 
 ```bash
 modemctl --port COM8 sms-send "+1234567890" "hello"
+modemctl --port COM8 sms-send "+1234567890" "hello" --dry-run
 modemctl --port COM8 sms-send "+1234567890" "你好" --encoding ucs2
 modemctl --port COM8 sms-list
 modemctl --port COM8 sms-read 1
 modemctl --port COM8 sms-delete 1
+modemctl --port COM8 sms-delete 1 --dry-run
 ```
 
 `sms-send` and `sms-delete` are state-changing. They may incur charges or remove
-messages from modem storage.
+messages from modem storage. Use `--dry-run` to print the intended operation
+without opening the modem.
 
 ## Call Commands
 
 ```bash
 modemctl --port COM8 call-dial "+1234567890"
+modemctl --port COM8 call-dial "+1234567890" --dry-run
 modemctl --port COM8 call-answer
 modemctl --port COM8 call-hangup
 modemctl --port COM8 call-list
@@ -75,17 +84,19 @@ modemctl --port COM8 dtmf "123#"
 ```
 
 `call-dial`, `call-answer`, `call-hangup`, and `dtmf` affect live call state.
+They support `--dry-run`.
 
 ## Audio Control Commands
 
 ```bash
 modemctl --port COM8 audio-volume 70
+modemctl --port COM8 audio-volume 70 --dry-run
 modemctl --port COM8 audio-mute on
 modemctl --port COM8 audio-mute off
 ```
 
 These use common AT commands when supported by the module. Live call audio is
-not transported through the serial AT port.
+not transported through the serial AT port. They support `--dry-run`.
 
 ## Event Monitoring
 

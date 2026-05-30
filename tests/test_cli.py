@@ -32,6 +32,14 @@ class CLITests(unittest.TestCase):
         self.assertEqual(args.format, "markdown")
         self.assertTrue(args.json)
 
+    def test_parser_accepts_dry_run_for_state_changing_commands(self):
+        parser = build_parser()
+
+        args = parser.parse_args(["--port", "COM8", "sms-send", "+123", "hello", "--dry-run"])
+
+        self.assertEqual(args.command, "sms-send")
+        self.assertTrue(args.dry_run)
+
     def test_normalize_dataclass_list(self):
         message = SMSMessage(index=1, status="REC READ", sender="+123", timestamp="now", text="hello")
 
@@ -123,6 +131,27 @@ class CLITests(unittest.TestCase):
 
         self.assertIn("enable_event_notifications", fake.calls)
         self.assertIn(("monitor_events", 1), fake.calls)
+
+    def test_dry_run_handlers_do_not_open_modem(self):
+        cases = [
+            (cli.cmd_raw, args_for(dry_run=True, at_command="AT+CFUN=1,1")),
+            (cli.cmd_sms_send, args_for(dry_run=True, number="+123", text="hello")),
+            (cli.cmd_sms_delete, args_for(dry_run=True, index=1)),
+            (cli.cmd_call_dial, args_for(dry_run=True, number="+123")),
+            (cli.cmd_call_answer, args_for(dry_run=True)),
+            (cli.cmd_call_hangup, args_for(dry_run=True)),
+            (cli.cmd_dtmf, args_for(dry_run=True, digits="123#")),
+            (cli.cmd_audio_volume, args_for(dry_run=True, level=70)),
+            (cli.cmd_audio_mute, args_for(dry_run=True, state="on")),
+        ]
+
+        with patch("cellular_modem.cli._open_modem", side_effect=AssertionError("opened modem")):
+            for handler, args in cases:
+                output = io.StringIO()
+                with redirect_stdout(output):
+                    result = handler(args)
+                self.assertEqual(result, 0)
+                self.assertIn("dry_run: True", output.getvalue())
 
 
 class FakeCliModem:
@@ -219,6 +248,7 @@ def args_for(**overrides):
         "state": "off",
         "enable_events": False,
         "seconds": None,
+        "dry_run": False,
     }
     values.update(overrides)
     return SimpleNamespace(**values)

@@ -72,11 +72,13 @@ def build_parser() -> argparse.ArgumentParser:
     raw = _add(subparsers, "raw", cmd_raw, "Run a raw AT command.")
     raw.add_argument("at_command")
     raw.add_argument("--command-timeout", type=float, default=5.0)
+    _add_dry_run(raw)
 
     sms_send = _add(subparsers, "sms-send", cmd_sms_send, "Send an SMS.")
     sms_send.add_argument("number")
     sms_send.add_argument("text")
     sms_send.add_argument("--encoding", choices=["auto", "gsm", "ucs2"], default="auto")
+    _add_dry_run(sms_send)
 
     sms_list = _add(subparsers, "sms-list", cmd_sms_list, "List SMS messages.")
     sms_list.add_argument("--status", default="ALL", help='ALL, "REC UNREAD", "REC READ", etc.')
@@ -86,23 +88,30 @@ def build_parser() -> argparse.ArgumentParser:
 
     sms_delete = _add(subparsers, "sms-delete", cmd_sms_delete, "Delete an SMS by storage index.")
     sms_delete.add_argument("index", type=int)
+    _add_dry_run(sms_delete)
 
     call_dial = _add(subparsers, "call-dial", cmd_call_dial, "Dial a voice call.")
     call_dial.add_argument("number")
+    _add_dry_run(call_dial)
 
-    _add(subparsers, "call-answer", cmd_call_answer, "Answer an incoming call.")
-    _add(subparsers, "call-hangup", cmd_call_hangup, "Hang up the current call.")
+    call_answer = _add(subparsers, "call-answer", cmd_call_answer, "Answer an incoming call.")
+    _add_dry_run(call_answer)
+    call_hangup = _add(subparsers, "call-hangup", cmd_call_hangup, "Hang up the current call.")
+    _add_dry_run(call_hangup)
     _add(subparsers, "call-list", cmd_call_list, "List active calls.")
 
     dtmf = _add(subparsers, "dtmf", cmd_dtmf, "Send DTMF digits during a call.")
     dtmf.add_argument("digits")
     dtmf.add_argument("--duration", type=int)
+    _add_dry_run(dtmf)
 
     volume = _add(subparsers, "audio-volume", cmd_audio_volume, "Set speaker volume if supported.")
     volume.add_argument("level", type=int)
+    _add_dry_run(volume)
 
     mute = _add(subparsers, "audio-mute", cmd_audio_mute, "Mute or unmute microphone if supported.")
     mute.add_argument("state", choices=["on", "off"])
+    _add_dry_run(mute)
 
     monitor = _add(subparsers, "monitor", cmd_monitor, "Print unsolicited modem events.")
     monitor.add_argument("--seconds", type=float, help="Stop after this many seconds. Default is forever.")
@@ -116,6 +125,14 @@ def _add(subparsers, name: str, handler, help_text: str):
     parser.add_argument("--json", action="store_true", default=argparse.SUPPRESS, help=argparse.SUPPRESS)
     parser.set_defaults(handler=handler)
     return parser
+
+
+def _add_dry_run(parser) -> None:
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print the intended operation without opening the modem.",
+    )
 
 
 def cmd_ports(args) -> int:
@@ -160,6 +177,8 @@ def cmd_smoke(args) -> int:
 
 
 def cmd_raw(args) -> int:
+    if args.dry_run:
+        return _dry_run(args, "raw", at_command=args.at_command, command_timeout=args.command_timeout)
     with _open_modem(args) as modem:
         response = modem.raw(args.at_command, timeout=args.command_timeout)
         _print({"final": response.final, "lines": response.lines}, args.json)
@@ -167,6 +186,14 @@ def cmd_raw(args) -> int:
 
 
 def cmd_sms_send(args) -> int:
+    if args.dry_run:
+        return _dry_run(
+            args,
+            "sms-send",
+            number=args.number,
+            encoding=args.encoding,
+            text_length=len(args.text),
+        )
     with _open_modem(args) as modem:
         reference = modem.send_sms(args.number, args.text, encoding=args.encoding)
         _print({"message_reference": reference}, args.json)
@@ -186,6 +213,8 @@ def cmd_sms_read(args) -> int:
 
 
 def cmd_sms_delete(args) -> int:
+    if args.dry_run:
+        return _dry_run(args, "sms-delete", index=args.index)
     with _open_modem(args) as modem:
         modem.delete_sms(args.index)
     print(f"deleted SMS index {args.index}")
@@ -193,6 +222,8 @@ def cmd_sms_delete(args) -> int:
 
 
 def cmd_call_dial(args) -> int:
+    if args.dry_run:
+        return _dry_run(args, "call-dial", number=args.number)
     with _open_modem(args) as modem:
         response = modem.dial(args.number)
         _print({"final": response.final, "lines": response.lines}, args.json)
@@ -200,6 +231,8 @@ def cmd_call_dial(args) -> int:
 
 
 def cmd_call_answer(args) -> int:
+    if args.dry_run:
+        return _dry_run(args, "call-answer")
     with _open_modem(args) as modem:
         response = modem.answer()
         _print({"final": response.final, "lines": response.lines}, args.json)
@@ -207,6 +240,8 @@ def cmd_call_answer(args) -> int:
 
 
 def cmd_call_hangup(args) -> int:
+    if args.dry_run:
+        return _dry_run(args, "call-hangup")
     with _open_modem(args) as modem:
         response = modem.hangup()
         _print({"final": response.final, "lines": response.lines}, args.json)
@@ -220,6 +255,8 @@ def cmd_call_list(args) -> int:
 
 
 def cmd_dtmf(args) -> int:
+    if args.dry_run:
+        return _dry_run(args, "dtmf", digits_length=len(args.digits), duration=args.duration)
     with _open_modem(args) as modem:
         response = modem.send_dtmf(args.digits, duration=args.duration)
         _print({"final": response.final, "lines": response.lines}, args.json)
@@ -227,6 +264,8 @@ def cmd_dtmf(args) -> int:
 
 
 def cmd_audio_volume(args) -> int:
+    if args.dry_run:
+        return _dry_run(args, "audio-volume", level=args.level)
     with _open_modem(args) as modem:
         response = modem.set_speaker_volume(args.level)
         _print({"final": response.final, "lines": response.lines}, args.json)
@@ -234,6 +273,8 @@ def cmd_audio_volume(args) -> int:
 
 
 def cmd_audio_mute(args) -> int:
+    if args.dry_run:
+        return _dry_run(args, "audio-mute", state=args.state)
     with _open_modem(args) as modem:
         response = modem.mute_microphone(args.state == "on")
         _print({"final": response.final, "lines": response.lines}, args.json)
@@ -258,6 +299,18 @@ def _open_modem(args):
         yield modem
     finally:
         modem.close()
+
+
+def _dry_run(args, action: str, **details: Any) -> int:
+    payload = {
+        "dry_run": True,
+        "action": action,
+        "port": args.port,
+        "profile": args.profile,
+        **details,
+    }
+    _print(payload, args.json)
+    return 0
 
 
 def _print(value: Any, as_json: bool) -> None:

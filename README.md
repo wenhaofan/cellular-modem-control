@@ -73,6 +73,7 @@ alias.
 modemctl ports
 modemctl --port COM8 raw "ATI"
 modemctl --port COM8 smoke --json
+modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
 modemctl --port COM8 sms-send "+8613800138000" "Chinese text" --encoding ucs2
 modemctl --port COM8 sms-list
 modemctl --port COM8 sms-read 1
@@ -88,6 +89,10 @@ modemctl --port COM8 monitor --enable-events
 
 Sending SMS and placing calls may incur carrier charges. The CLI only performs
 those actions when the command explicitly asks for them.
+
+Use `--dry-run` on state-changing commands such as `sms-send`, `sms-delete`,
+`call-dial`, `call-answer`, `call-hangup`, `dtmf`, `audio-volume`, and
+`audio-mute` to preview the operation without opening the serial port.
 
 Use `modemctl --port COM8 smoke --json` for a read-only hardware validation
 report. It runs open/init/info/SIM/signal/ATI checks and redacts modem
