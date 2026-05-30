@@ -7,12 +7,7 @@ This project is pre-1.0. Before publishing a release:
 3. Run:
 
    ```bash
-   coverage run -m unittest discover -s tests
-   coverage report
-   ruff check .
-   mypy
-   python -m build
-   twine check dist/*
+   python scripts/check.py
    ```
 
    If a modem is available, also run a read-only smoke check:

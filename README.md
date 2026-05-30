@@ -61,6 +61,7 @@ alias.
 - [Hardware notes](docs/hardware.md)
 - [Profiles](docs/profiles.md)
 - [Testing](docs/testing.md)
+- [Maintenance](docs/maintenance.md)
 - [Release process](docs/release.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
@@ -97,8 +98,5 @@ For issue reports, use `modemctl --port COM8 smoke --format markdown`.
 
 ```powershell
 python -m pip install -e ".[dev]"
-python -m unittest discover -s tests
-ruff check .
-mypy
-python -m build
+python scripts/check.py
 ```

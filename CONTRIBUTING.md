@@ -10,6 +10,7 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
+pre-commit install
 ```
 
 On Linux/macOS:
@@ -19,6 +20,7 @@ python -m venv .venv
 . .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
+pre-commit install
 ```
 
 ## Before Submitting
@@ -26,13 +28,10 @@ python -m pip install -e ".[dev]"
 Run the same checks used by CI:
 
 ```bash
-python -m unittest discover -s tests
-coverage run -m unittest discover -s tests
-coverage report
-ruff check .
-mypy
-python -m build
+python scripts/check.py
 ```
+
+For a faster edit loop, run `python scripts/check.py --skip-build`.
 
 Use a virtual environment. Installing `.[dev]` into a shared Python environment
 can upgrade linting and packaging dependencies used by unrelated projects.

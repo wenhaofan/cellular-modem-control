@@ -35,6 +35,7 @@ dev = [
   "build>=1.2",
   "coverage[toml]>=7.6",
   "mypy>=1.10",
+  "pre-commit>=4.0",
   "pytest>=8.0",
   "ruff>=0.5",
   "twine>=5.0",
@@ -56,6 +57,9 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/check.py" = ["S603"]
 
 [tool.mypy]
 python_version = "3.10"

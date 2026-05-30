@@ -3,12 +3,15 @@
 The default test suite must run without a physical modem.
 
 ```bash
-python -m unittest discover -s tests
-coverage run -m unittest discover -s tests
-coverage report
-ruff check .
-mypy
-python -m build
+python scripts/check.py
+```
+
+Use `python scripts/check.py --skip-build` while iterating locally.
+
+Install pre-commit hooks for faster feedback:
+
+```bash
+pre-commit install
 ```
 
 ## Test Categories
