@@ -25,5 +25,7 @@ versioning once public releases begin.
 - Distribution content validation for source and wheel artifacts.
 - Version consistency checks across project metadata, package exports, changelog,
   and release tags.
+- Documentation safety checks for public examples of state-changing modem
+  commands.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.

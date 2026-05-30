@@ -20,7 +20,13 @@ def main() -> int:
     parser.add_argument("--baudrate", type=int, default=115200)
     parser.add_argument("--timeout", type=float, default=1.0)
     parser.add_argument("--encoding", choices=["auto", "gsm", "ucs2"], default="auto")
+    parser.add_argument("--dry-run", action="store_true", help="Print the planned SMS without opening the modem.")
     args = parser.parse_args()
+
+    if args.dry_run:
+        print(f"dry_run: True\nport: {args.port}\nprofile: {args.profile}\nnumber: {args.number}")
+        print(f"encoding: {args.encoding}\ntext_length: {len(args.text)}")
+        return 0
 
     with Modem(port=args.port, baudrate=args.baudrate, timeout=args.timeout, profile=args.profile) as modem:
         modem.initialize()

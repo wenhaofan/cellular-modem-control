@@ -40,7 +40,7 @@ modemctl --port COM8 --profile generic info
 modemctl --port COM8 signal
 modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
 modemctl --port COM8 call-dial "+8613800138000" --dry-run
-modemctl --port COM8 call-hangup
+modemctl --port COM8 call-hangup --dry-run
 ```
 
 Without installing the package, run from this repository:
@@ -75,14 +75,14 @@ modemctl ports
 modemctl --port COM8 raw "ATI"
 modemctl --port COM8 smoke --json
 modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
-modemctl --port COM8 sms-send "+8613800138000" "Chinese text" --encoding ucs2
+modemctl --port COM8 sms-send "+8613800138000" "Chinese text" --encoding ucs2 --dry-run
 modemctl --port COM8 sms-list
 modemctl --port COM8 sms-read 1
-modemctl --port COM8 sms-delete 1
-modemctl --port COM8 call-answer
-modemctl --port COM8 dtmf "123#"
-modemctl --port COM8 audio-volume 70
-modemctl --port COM8 audio-mute on
+modemctl --port COM8 sms-delete 1 --dry-run
+modemctl --port COM8 call-answer --dry-run
+modemctl --port COM8 dtmf "123#" --dry-run
+modemctl --port COM8 audio-volume 70 --dry-run
+modemctl --port COM8 audio-mute on --dry-run
 modemctl --port COM8 monitor --enable-events
 ```
 

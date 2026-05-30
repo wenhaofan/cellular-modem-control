@@ -22,14 +22,15 @@ prints a Markdown report with sensitive identifiers redacted by default.
 ## Send One SMS
 
 ```bash
-python examples/send_sms.py --port COM8 "+1234567890" "hello"
+python examples/send_sms.py --port COM8 "+1234567890" "hello" --dry-run
 ```
 
-SMS delivery may incur carrier charges. For non-ASCII text, use auto-detection
-or force UCS2:
+SMS delivery may incur carrier charges. Keep `--dry-run` while reviewing command
+arguments. Remove it only when you intentionally want to send the message. For
+non-ASCII text, use auto-detection or force UCS2:
 
 ```bash
-python examples/send_sms.py --port COM8 "+1234567890" "hello" --encoding ucs2
+python examples/send_sms.py --port COM8 "+1234567890" "你好" --encoding ucs2 --dry-run
 ```
 
 The example calls `Modem.initialize()` before sending so it follows the same

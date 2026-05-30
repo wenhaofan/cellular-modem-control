@@ -49,8 +49,8 @@ modemctl --port COM8 sms-list
 modemctl --port COM8 sms-read 1
 modemctl --port COM8 sms-delete 1 --dry-run
 modemctl --port COM8 call-dial "+8613800138000" --dry-run
-modemctl --port COM8 call-answer
-modemctl --port COM8 call-hangup
+modemctl --port COM8 call-answer --dry-run
+modemctl --port COM8 call-hangup --dry-run
 modemctl --port COM8 monitor --enable-events
 ```
 

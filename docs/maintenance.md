@@ -18,6 +18,10 @@ Version consistency is checked with `scripts/check_version.py`. It compares
 `pyproject.toml`, `cellular_modem.__version__`, `CHANGELOG.md`, and release tags
 when a tag is present.
 
+High-level public examples are checked with `scripts/check_docs_safety.py` so
+state-changing commands stay behind `--dry-run` in README, examples, and bundled
+skills.
+
 Run a focused bundled-skill metadata check with:
 
 ```bash
