@@ -23,6 +23,10 @@ High-level public examples are checked with `scripts/check_docs_safety.py` so
 state-changing commands stay behind `--dry-run` in README, examples, and bundled
 skills.
 
+Local Markdown links are checked with `scripts/check_links.py`. It validates
+relative links in README, root Markdown files, docs, GitHub Markdown templates,
+and bundled skill Markdown without requiring network access.
+
 Run a focused bundled-skill metadata check with:
 
 ```bash

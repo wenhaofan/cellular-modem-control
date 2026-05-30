@@ -7,6 +7,7 @@ python scripts/check.py
 ```
 
 Use `python scripts/check.py --skip-build` while iterating locally.
+Use `python scripts/check.py links` after editing local Markdown links.
 
 Install pre-commit hooks for faster feedback:
 
