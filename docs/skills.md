@@ -10,13 +10,17 @@ rules, dry-run previews, and quality gate used by the Python package.
 
 ## Local Installation
 
-Copy or symlink a skill folder into the Codex skills directory on a machine that
-should use it:
+Install or refresh the bundled skills on a machine that should use them:
 
 ```powershell
-Copy-Item -Recurse .\skills\cellular-at-modem "$env:USERPROFILE\.codex\skills\cellular-at-modem"
-Copy-Item -Recurse .\skills\quectel-modem "$env:USERPROFILE\.codex\skills\quectel-modem"
+python scripts/install_skills.py --dry-run
+python scripts/install_skills.py
 ```
+
+By default, the installer writes to `$CODEX_HOME/skills` when `CODEX_HOME` is
+set, otherwise to `~/.codex/skills`. Use `--target` to install into another
+Codex skills directory, and use `--skill cellular-at-modem` to install a single
+skill.
 
 Keep the project checkout available when using the skills locally. On this
 Windows machine, the expected checkout path is `L:\项目\sms_skill`.

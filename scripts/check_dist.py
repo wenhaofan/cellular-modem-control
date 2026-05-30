@@ -20,6 +20,7 @@ SOURCE_REQUIRED = [
     "scripts/check.py",
     "scripts/check_docs_safety.py",
     "scripts/check_install.py",
+    "scripts/install_skills.py",
     "scripts/check_version.py",
     "scripts/check_skills.py",
     "skills/cellular-at-modem/SKILL.md",

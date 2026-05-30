@@ -29,6 +29,13 @@ Run a focused bundled-skill metadata check with:
 python scripts/check.py skills
 ```
 
+Refresh locally installed Codex skills from the bundled skill folders with:
+
+```bash
+python scripts/install_skills.py --dry-run
+python scripts/install_skills.py
+```
+
 Run a focused static security lint pass with:
 
 ```bash
@@ -63,4 +70,5 @@ no-hardware tests where possible.
 Skill folders under `skills/` are packaged with the source distribution and
 validated by `scripts/check_skills.py`. Keep the skill workflow aligned with the
 CLI safety model, especially read-only probes and `--dry-run` previews for
-state-changing commands.
+state-changing commands. Use `scripts/install_skills.py` to refresh local
+Codex installations after changing bundled skill content.

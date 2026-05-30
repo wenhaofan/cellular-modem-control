@@ -29,5 +29,6 @@ versioning once public releases begin.
   commands.
 - Ruff security linting in the default local quality gate.
 - Wheel installation smoke check in the build quality gate.
+- Local installer for refreshing bundled Codex skills.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.

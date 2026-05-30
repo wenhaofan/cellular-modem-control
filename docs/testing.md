@@ -22,7 +22,7 @@ pre-commit install
 
 Coverage is intentionally enforced only for source packages, not for docs,
 skills, or test helpers. Keep new behavior covered by no-hardware tests unless
-the feature is fundamentally hardware-only. The initial gate is 65%; raise it
+the feature is fundamentally hardware-only. The current gate is 80%; raise it
 only after adding coverage for existing gaps.
 
 ## Hardware Smoke Checks
