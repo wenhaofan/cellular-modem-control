@@ -28,6 +28,7 @@ versioning once public releases begin.
 - Redacted local Quectel EC600N hardware smoke validation notes.
 - Documentation safety checks for public examples of state-changing modem
   commands.
+- Support policy and feature request template for public issue triage.
 - Ruff security linting in the default local quality gate.
 - Wheel installation smoke check in the build quality gate.
 - Local installer for refreshing bundled Codex skills.

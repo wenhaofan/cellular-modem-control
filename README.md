@@ -66,6 +66,7 @@ alias.
 - [Maintenance](docs/maintenance.md)
 - [Release process](docs/release.md)
 - [Contributing](CONTRIBUTING.md)
+- [Support](SUPPORT.md)
 - [Security policy](SECURITY.md)
 
 ## Useful Commands

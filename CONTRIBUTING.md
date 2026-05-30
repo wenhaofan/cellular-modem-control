@@ -36,6 +36,18 @@ For a faster edit loop, run `python scripts/check.py --skip-build`.
 Use a virtual environment. Installing `.[dev]` into a shared Python environment
 can upgrade linting and packaging dependencies used by unrelated projects.
 
+## Opening Issues
+
+Use the issue template that matches the work:
+
+- Bug reports for reproducible failures in the generic profile, parser, CLI, or
+  packaging.
+- Modem profile requests for vendor-specific AT behavior.
+- Feature requests for new generic CLI, Python API, documentation, packaging, or
+  Codex skill capabilities.
+
+See `SUPPORT.md` for the expected hardware smoke output and redaction rules.
+
 ## Hardware-Safe Contributions
 
 - Unit tests must not require a real modem by default.

@@ -1,0 +1,51 @@
+name: Feature request
+description: Propose a CLI, Python API, documentation, or workflow improvement.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use modem profile requests for vendor-specific AT behavior. Use this
+        template for generic project capabilities and workflow improvements.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI
+        - Python API
+        - Documentation
+        - Packaging or release
+        - Codex skill
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What workflow is hard, unsafe, missing, or too manual today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the behavior or interface you want.
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Hardware and safety impact
+      description: Note whether this could send SMS, place calls, delete modem data, or change audio/radio settings.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional workarounds or existing commands you tried.
+    validations:
+      required: false

@@ -7,6 +7,7 @@
 - [ ] Parser or protocol fix
 - [ ] CLI change
 - [ ] Profile or vendor behavior
+- [ ] Feature or API addition
 - [ ] Documentation
 - [ ] Packaging or CI
 
@@ -18,8 +19,5 @@
 
 ## Validation
 
-- [ ] `python -m unittest discover -s tests`
-- [ ] `ruff check .`
-- [ ] `mypy`
-- [ ] `python -m build`
+- [ ] `python scripts/check.py`
 - [ ] Hardware smoke test, if relevant:
