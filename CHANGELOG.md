@@ -25,6 +25,7 @@ versioning once public releases begin.
 - Distribution content validation for source and wheel artifacts.
 - Version consistency checks across project metadata, package exports, changelog,
   and release tags.
+- Redacted local Quectel EC600N hardware smoke validation notes.
 - Documentation safety checks for public examples of state-changing modem
   commands.
 - Ruff security linting in the default local quality gate.
