@@ -20,5 +20,6 @@ versioning once public releases begin.
 - Markdown smoke report output for issue attachments.
 - Public serial port discovery API and runnable Python examples.
 - `--dry-run` previews for state-changing CLI commands and raw AT commands.
+- Bundled skill metadata validation in the local quality gate.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.

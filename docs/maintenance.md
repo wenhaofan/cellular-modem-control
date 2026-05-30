@@ -11,6 +11,12 @@ python scripts/check.py
 Use `--skip-build` while iterating when package metadata is not part of the
 change.
 
+Run a focused bundled-skill metadata check with:
+
+```bash
+python scripts/check.py skills
+```
+
 ## Pre-Commit
 
 Install hooks after installing development dependencies:
@@ -29,3 +35,10 @@ Dependabot configuration is included for GitHub hosting. It checks GitHub
 Actions and Python packaging metadata weekly. Review dependency updates with the
 full local quality gate and keep hardware-affecting behavior covered by
 no-hardware tests where possible.
+
+## Bundled Skills
+
+Skill folders under `skills/` are packaged with the source distribution and
+validated by `scripts/check_skills.py`. Keep the skill workflow aligned with the
+CLI safety model, especially read-only probes and `--dry-run` previews for
+state-changing commands.

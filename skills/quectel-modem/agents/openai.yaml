@@ -1,4 +1,4 @@
 interface:
   display_name: "Quectel Modem"
-  short_description: "Control Quectel cellular modules over serial AT commands."
-  default_prompt: "Use this skill to inspect and control a local Quectel modem for SMS, calls, and voice-call AT operations."
+  short_description: "Inspect and control Quectel cellular modules over serial AT commands."
+  default_prompt: "Use this skill to inspect a local Quectel modem, run read-only smoke checks, preview unsafe actions with dry-run, and handle SMS, calls, or voice-call AT operations when explicitly requested."

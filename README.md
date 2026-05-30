@@ -61,6 +61,7 @@ alias.
 - [Examples](docs/examples.md)
 - [Hardware notes](docs/hardware.md)
 - [Profiles](docs/profiles.md)
+- [Codex skills](docs/skills.md)
 - [Testing](docs/testing.md)
 - [Maintenance](docs/maintenance.md)
 - [Release process](docs/release.md)

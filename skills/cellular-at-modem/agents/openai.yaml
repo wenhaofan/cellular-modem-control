@@ -1,4 +1,4 @@
 interface:
   display_name: "Cellular AT Modem"
-  short_description: "Control modems with AT commands."
-  default_prompt: "Use this skill to inspect and control a local cellular modem for SMS, calls, events, and AT command troubleshooting."
+  short_description: "Inspect and control cellular modems with safer AT-command workflows."
+  default_prompt: "Use this skill to inspect a local cellular modem, run read-only smoke checks, preview unsafe actions with dry-run, and control SMS, calls, events, or raw AT commands when explicitly requested."
