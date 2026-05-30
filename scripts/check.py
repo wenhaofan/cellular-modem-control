@@ -9,6 +9,7 @@ import subprocess
 import sys
 
 CHECKS = {
+    "version": [[sys.executable, "scripts/check_version.py"]],
     "tests": [
         [sys.executable, "-m", "coverage", "run", "-m", "unittest", "discover", "-s", "tests"],
         [sys.executable, "-m", "coverage", "report"],

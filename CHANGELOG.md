@@ -23,5 +23,7 @@ versioning once public releases begin.
 - Bundled skill metadata validation in the local quality gate.
 - Release workflow for trusted publishing to TestPyPI and PyPI.
 - Distribution content validation for source and wheel artifacts.
+- Version consistency checks across project metadata, package exports, changelog,
+  and release tags.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.

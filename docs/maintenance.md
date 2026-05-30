@@ -14,6 +14,10 @@ change.
 The build check creates an sdist and wheel, verifies expected distribution
 contents with `scripts/check_dist.py`, and then runs `twine check`.
 
+Version consistency is checked with `scripts/check_version.py`. It compares
+`pyproject.toml`, `cellular_modem.__version__`, `CHANGELOG.md`, and release tags
+when a tag is present.
+
 Run a focused bundled-skill metadata check with:
 
 ```bash

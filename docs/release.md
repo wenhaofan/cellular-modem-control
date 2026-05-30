@@ -5,7 +5,13 @@ Before publishing a release:
 
 1. Update `CHANGELOG.md`.
 2. Confirm `pyproject.toml` has the target version.
-3. Run:
+3. Confirm version metadata and changelog agree:
+
+   ```bash
+   python scripts/check_version.py
+   ```
+
+4. Run:
 
    ```bash
    python scripts/check.py
@@ -17,19 +23,20 @@ Before publishing a release:
    modemctl --port COM8 --profile generic smoke --json
    ```
 
-4. Confirm the distribution content check passes:
+5. Confirm the distribution content check passes:
 
    ```bash
    python scripts/check_dist.py
    ```
 
-5. Create a signed git tag:
+6. Create a signed git tag:
 
    ```bash
    git tag -s v0.1.0 -m "v0.1.0"
+   python scripts/check_version.py --tag v0.1.0
    ```
 
-6. Push the tag and create a GitHub release from that tag. Publishing the GitHub
+7. Push the tag and create a GitHub release from that tag. Publishing the GitHub
    release runs the release workflow and publishes to PyPI through trusted
    publishing.
 
@@ -55,3 +62,6 @@ Configure PyPI and TestPyPI trusted publishers before the first hosted release:
 
 The workflow does not require an API token when trusted publishing is
 configured.
+
+The PyPI publish path requires a tag matching `v<pyproject version>`. TestPyPI
+publishing can be run manually from a branch for pre-release package checks.

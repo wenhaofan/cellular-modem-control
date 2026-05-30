@@ -38,6 +38,7 @@ dev = [
   "pre-commit>=4.0",
   "pytest>=8.0",
   "ruff>=0.5",
+  "tomli>=2.0; python_version<'3.11'",
   "twine>=5.0",
 ]
 
