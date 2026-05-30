@@ -11,6 +11,7 @@ import sys
 CHECKS = {
     "version": [[sys.executable, "scripts/check_version.py"]],
     "docs": [[sys.executable, "scripts/check_docs_safety.py"]],
+    "security": [[sys.executable, "-m", "ruff", "check", "--select", "S", "."]],
     "tests": [
         [sys.executable, "-m", "coverage", "run", "-m", "unittest", "discover", "-s", "tests"],
         [sys.executable, "-m", "coverage", "report"],

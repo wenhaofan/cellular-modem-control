@@ -19,3 +19,14 @@ carrier account information in public reports.
 This project can control hardware that may place calls or send billable SMS.
 Security reports involving unintended SMS, calls, message deletion, or raw AT
 command execution are in scope.
+
+## Maintainer Checks
+
+Run the local security lint before release or when changing command execution,
+file handling, or hardware-control flows:
+
+```bash
+python scripts/check.py security
+```
+
+The full `python scripts/check.py` gate also runs this check.

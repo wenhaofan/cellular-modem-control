@@ -28,6 +28,16 @@ Run a focused bundled-skill metadata check with:
 python scripts/check.py skills
 ```
 
+Run a focused static security lint pass with:
+
+```bash
+python scripts/check.py security
+```
+
+Ruff security rules (`S`) are enabled in the default lint configuration. When a
+subprocess or filesystem operation is intentional, prefer a narrow per-file
+ignore with a code review note rather than disabling the rule globally.
+
 ## Pre-Commit
 
 Install hooks after installing development dependencies:

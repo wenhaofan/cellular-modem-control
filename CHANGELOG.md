@@ -27,5 +27,6 @@ versioning once public releases begin.
   and release tags.
 - Documentation safety checks for public examples of state-changing modem
   commands.
+- Ruff security linting in the default local quality gate.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.
