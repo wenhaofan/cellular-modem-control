@@ -42,6 +42,12 @@ modemctl --port COM8 raw "ATI"
 `signal`, and `raw "ATI"`, and returns a structured report. It redacts sensitive
 identifiers by default. Use `--show-sensitive` only for private local debugging.
 
+For issue reports, prefer Markdown:
+
+```bash
+modemctl --port COM8 smoke --format markdown
+```
+
 ## SMS Commands
 
 ```bash

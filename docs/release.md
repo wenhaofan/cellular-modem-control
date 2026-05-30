@@ -7,7 +7,8 @@ This project is pre-1.0. Before publishing a release:
 3. Run:
 
    ```bash
-   python -m unittest discover -s tests
+   coverage run -m unittest discover -s tests
+   coverage report
    ruff check .
    mypy
    python -m build

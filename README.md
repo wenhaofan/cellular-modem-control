@@ -91,6 +91,8 @@ Use `modemctl --port COM8 smoke --json` for a read-only hardware validation
 report. It runs open/init/info/SIM/signal/ATI checks and redacts modem
 identifiers by default.
 
+For issue reports, use `modemctl --port COM8 smoke --format markdown`.
+
 ## Development
 
 ```powershell

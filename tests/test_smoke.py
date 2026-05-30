@@ -1,7 +1,7 @@
 import unittest
 
 from cellular_modem.at import ATResponse
-from cellular_modem.smoke import report_to_dict, run_read_only_smoke
+from cellular_modem.smoke import report_to_dict, report_to_markdown, run_read_only_smoke
 
 
 class FakeSmokeModem:
@@ -100,6 +100,16 @@ class SmokeTests(unittest.TestCase):
 
         self.assertFalse(factory.instance.initialized)
         self.assertEqual(payload["checks"][1]["value"], "SKIPPED")
+
+    def test_markdown_report_is_issue_ready(self):
+        report = run_read_only_smoke(port="COM8", profile="generic", modem_factory=FakeSmokeFactory())
+
+        markdown = report_to_markdown(report)
+
+        self.assertIn("# Modem Smoke Report", markdown)
+        self.assertIn("| `info` | PASS |", markdown)
+        self.assertIn("12***45", markdown)
+        self.assertNotIn("123456789012345", markdown)
 
 
 if __name__ == "__main__":

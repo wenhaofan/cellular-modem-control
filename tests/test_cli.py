@@ -21,10 +21,11 @@ class CLITests(unittest.TestCase):
     def test_parser_accepts_smoke_show_sensitive(self):
         parser = build_parser()
 
-        args = parser.parse_args(["--port", "COM8", "smoke", "--show-sensitive", "--json"])
+        args = parser.parse_args(["--port", "COM8", "smoke", "--show-sensitive", "--format", "markdown", "--json"])
 
         self.assertEqual(args.command, "smoke")
         self.assertTrue(args.show_sensitive)
+        self.assertEqual(args.format, "markdown")
         self.assertTrue(args.json)
 
     def test_normalize_dataclass_list(self):

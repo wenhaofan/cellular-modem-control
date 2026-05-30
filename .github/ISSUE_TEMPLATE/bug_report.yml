@@ -66,7 +66,7 @@ body:
     id: probe
     attributes:
       label: Safe probe output
-      description: Optional output from info/sim/signal/raw ATI with sensitive values redacted.
+      description: Prefer `modemctl --port <port> smoke --format markdown`; keep sensitive values redacted.
       render: text
     validations:
       required: false

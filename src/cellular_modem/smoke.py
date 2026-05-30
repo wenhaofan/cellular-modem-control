@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -113,12 +114,45 @@ def report_to_dict(report: SmokeReport) -> dict[str, Any]:
     }
 
 
+def report_to_markdown(report: SmokeReport) -> str:
+    payload = report_to_dict(report)
+    lines = [
+        "# Modem Smoke Report",
+        "",
+        f"- Overall: {'PASS' if report.ok else 'FAIL'}",
+        f"- Port: `{report.port}`",
+        f"- Profile: `{report.profile}`",
+        f"- Sensitive values redacted: `{str(report.sensitive_redacted).lower()}`",
+        "",
+        "| Check | Result | Value | Error |",
+        "| --- | --- | --- | --- |",
+    ]
+    for check in payload["checks"]:
+        result = "PASS" if check["ok"] else "FAIL"
+        value = _markdown_value(check["value"])
+        error = _markdown_value(check["error"])
+        lines.append(f"| `{check['name']}` | {result} | {value} | {error} |")
+    return "\n".join(lines)
+
+
 def _check(name: str, func, show_sensitive: bool) -> SmokeCheck:
     try:
         value = func()
     except Exception as exc:  # noqa: BLE001 - report check failures instead of aborting the whole smoke run
         return SmokeCheck(name=name, ok=False, error=_error_message(exc))
     return SmokeCheck(name=name, ok=True, value=value if show_sensitive else _redact(value))
+
+
+def _markdown_value(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return f"`{_escape_markdown_table(value)}`"
+    return f"`{_escape_markdown_table(json.dumps(value, ensure_ascii=False, sort_keys=True))}`"
+
+
+def _escape_markdown_table(value: str) -> str:
+    return value.replace("|", "\\|").replace("\n", " ")
 
 
 def _initialize_modem(modem: ModemLike) -> str:

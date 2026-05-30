@@ -27,6 +27,8 @@ Run the same checks used by CI:
 
 ```bash
 python -m unittest discover -s tests
+coverage run -m unittest discover -s tests
+coverage report
 ruff check .
 mypy
 python -m build

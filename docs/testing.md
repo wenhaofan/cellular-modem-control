@@ -4,6 +4,8 @@ The default test suite must run without a physical modem.
 
 ```bash
 python -m unittest discover -s tests
+coverage run -m unittest discover -s tests
+coverage report
 ruff check .
 mypy
 python -m build
@@ -14,6 +16,11 @@ python -m build
 - Unit tests: no hardware, no pyserial device, safe in CI.
 - CLI smoke tests: parser and output behavior that does not open a real modem.
 - Hardware smoke tests: manual or opt-in checks against a real AT port.
+
+Coverage is intentionally enforced only for source packages, not for docs,
+skills, or test helpers. Keep new behavior covered by no-hardware tests unless
+the feature is fundamentally hardware-only. The initial gate is 65%; raise it
+only after adding coverage for existing gaps.
 
 ## Hardware Smoke Checks
 
@@ -29,6 +36,12 @@ modemctl --port COM8 --profile generic --json signal
 
 Prefer `smoke` for issue reports because it opens the port once and redacts
 modem identifiers by default.
+
+For copy-pasteable issue output:
+
+```bash
+modemctl --port COM8 --profile generic smoke --format markdown
+```
 
 Do not include state-changing commands in automated CI:
 

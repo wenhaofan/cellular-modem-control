@@ -13,7 +13,7 @@ from typing import Any
 from .at import ATError, ATTimeout
 from .modem import Modem
 from .profiles import PROFILES
-from .smoke import report_to_dict, run_read_only_smoke
+from .smoke import report_to_dict, report_to_markdown, run_read_only_smoke
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -60,6 +60,12 @@ def build_parser() -> argparse.ArgumentParser:
     _add(subparsers, "signal", cmd_signal, "Show signal quality.")
 
     smoke = _add(subparsers, "smoke", cmd_smoke, "Run read-only hardware smoke checks.")
+    smoke.add_argument(
+        "--format",
+        choices=["plain", "json", "markdown"],
+        default="plain",
+        help="Smoke report output format. --json is kept as a global shortcut for JSON.",
+    )
     smoke.add_argument("--show-sensitive", action="store_true", help="Do not redact modem identifiers in the report.")
 
     raw = _add(subparsers, "raw", cmd_raw, "Run a raw AT command.")
@@ -155,7 +161,12 @@ def cmd_smoke(args) -> int:
         initialize=not args.no_init,
         show_sensitive=args.show_sensitive,
     )
-    _print(report_to_dict(report), args.json)
+    if args.json or args.format == "json":
+        print(json.dumps(report_to_dict(report), ensure_ascii=False, indent=2))
+    elif args.format == "markdown":
+        print(report_to_markdown(report))
+    else:
+        _print(report_to_dict(report), False)
     return 0 if report.ok else 1
 
 

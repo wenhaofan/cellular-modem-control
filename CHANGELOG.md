@@ -17,5 +17,6 @@ versioning once public releases begin.
   and raw AT commands.
 - Read-only `modemctl smoke` hardware validation report with default identifier
   redaction.
+- Markdown smoke report output for issue attachments.
 - Codex skills for generic cellular AT modems and Quectel modems.
 - Unit tests for SMS parsing, UCS2 encoding, call parsing, and profile commands.
