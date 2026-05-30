@@ -12,7 +12,8 @@ Use `--skip-build` while iterating when package metadata is not part of the
 change.
 
 The build check creates an sdist and wheel, verifies expected distribution
-contents with `scripts/check_dist.py`, and then runs `twine check`.
+contents with `scripts/check_dist.py`, installs the wheel in a temporary virtual
+environment with `scripts/check_install.py`, and then runs `twine check`.
 
 Version consistency is checked with `scripts/check_version.py`. It compares
 `pyproject.toml`, `cellular_modem.__version__`, `CHANGELOG.md`, and release tags

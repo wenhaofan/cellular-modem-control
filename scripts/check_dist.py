@@ -19,6 +19,7 @@ SOURCE_REQUIRED = [
     "examples/read_only_smoke.py",
     "scripts/check.py",
     "scripts/check_docs_safety.py",
+    "scripts/check_install.py",
     "scripts/check_version.py",
     "scripts/check_skills.py",
     "skills/cellular-at-modem/SKILL.md",

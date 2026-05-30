@@ -27,6 +27,7 @@ Before publishing a release:
 
    ```bash
    python scripts/check_dist.py
+   python scripts/check_install.py
    ```
 
 6. Create a signed git tag:

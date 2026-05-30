@@ -22,6 +22,7 @@ CHECKS = {
     "build": [
         [sys.executable, "-m", "build"],
         [sys.executable, "scripts/check_dist.py"],
+        [sys.executable, "scripts/check_install.py"],
         [sys.executable, "-m", "twine", "check", "dist/*"],
     ],
 }
