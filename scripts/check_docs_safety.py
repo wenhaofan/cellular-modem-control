@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 TARGET_FILES = [
     ROOT / "README.md",
+    ROOT / "README.en.md",
     ROOT / "docs" / "examples.md",
     ROOT / "skills" / "cellular-at-modem" / "SKILL.md",
     ROOT / "skills" / "quectel-modem" / "SKILL.md",

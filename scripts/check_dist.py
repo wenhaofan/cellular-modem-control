@@ -9,6 +9,7 @@ from pathlib import Path
 
 SOURCE_REQUIRED = [
     "README.md",
+    "README.en.md",
     "LICENSE",
     "CHANGELOG.md",
     "SUPPORT.md",
@@ -28,6 +29,8 @@ SOURCE_REQUIRED = [
     "scripts/check_docs_safety.py",
     "scripts/check_install.py",
     "scripts/check_links.py",
+    "scripts/install.ps1",
+    "scripts/install.sh",
     "scripts/install_skills.py",
     "scripts/check_version.py",
     "scripts/check_skills.py",

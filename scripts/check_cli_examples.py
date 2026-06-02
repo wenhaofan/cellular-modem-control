@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCAN_ROOTS = ("README.md", "docs/**/*.md", "skills/**/*.md")
+SCAN_ROOTS = ("README.md", "README.en.md", "docs/**/*.md", "skills/**/*.md")
 FENCE_MARKERS = ("```", "~~~")
 
 

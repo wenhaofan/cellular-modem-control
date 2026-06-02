@@ -11,7 +11,12 @@ versioning once public releases begin.
 
 - Generic `cellular_modem` package for standard AT modem operations.
 - Backward-compatible `quectel_modem` import and CLI module aliases.
-- Bilingual English/Chinese README for public project upload.
+- Chinese-default README with a separate English README and language switch
+  links.
+- Agent-oriented use-case descriptions and search keywords for phone-call,
+  SMS, AT modem, Codex, Claude, CrawBot, and Hermes discovery.
+- Cross-platform one-command installers for the Python package and bundled
+  Codex skills.
 - `generic` and `quectel` modem profiles.
 - Compatibility support tiers and hardware validation matrix documentation.
 - CLI command `modemctl` for port listing, module information, SIM status,

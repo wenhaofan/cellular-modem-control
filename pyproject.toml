@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cellular-modem-control"
 version = "0.1.0"
-description = "Cross-platform AT-command control for cellular modules."
+description = "Cross-platform AT-command SMS and voice-call control for cellular modems and AI agents."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -13,7 +13,24 @@ license-files = ["LICENSE"]
 authors = [
   { name = "cellular-modem-control contributors" }
 ]
-keywords = ["at-commands", "cellular", "gsm", "lte", "modem", "sms", "serial"]
+keywords = [
+  "agent",
+  "ai-agent",
+  "at-commands",
+  "cellular",
+  "claude",
+  "codex",
+  "dtmf",
+  "gsm",
+  "lte",
+  "modem",
+  "phone-call",
+  "quectel",
+  "serial",
+  "simcom",
+  "sms",
+  "voice-call",
+]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
