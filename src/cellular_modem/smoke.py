@@ -44,7 +44,7 @@ class ModemLike(Protocol):
     def info(self) -> dict[str, str | list[str]]:
         ...
 
-    def sim_status(self) -> str:
+    def sim_info(self, show_sensitive: bool = False) -> dict[str, Any]:
         ...
 
     def signal_quality(self) -> dict[str, int | None]:
@@ -87,7 +87,9 @@ def run_read_only_smoke(
         else:
             checks.append(SmokeCheck(name="initialize", ok=True, value="SKIPPED"))
         checks.append(_check("info", modem.info, show_sensitive=show_sensitive))
-        checks.append(_check("sim", lambda: {"sim": modem.sim_status()}, show_sensitive=show_sensitive))
+        checks.append(
+            _check("sim", lambda: modem.sim_info(show_sensitive=show_sensitive), show_sensitive=show_sensitive)
+        )
         checks.append(_check("signal", modem.signal_quality, show_sensitive=show_sensitive))
         checks.append(_check("ati", lambda: _raw_response(modem.raw("ATI")), show_sensitive=show_sensitive))
     finally:

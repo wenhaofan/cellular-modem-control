@@ -7,9 +7,9 @@ from unittest.mock import patch
 
 from cellular_modem import cli
 from cellular_modem.at import ATResponse
-from cellular_modem.cli import _default_port, _normalize, build_parser, main
+from cellular_modem.cli import _default_port, _normalize, _resolve_port, build_parser, main
 from cellular_modem.modem import CallInfo, SMSMessage
-from cellular_modem.ports import SerialPortInfo
+from cellular_modem.ports import SerialPortInfo, SerialPortProbe
 
 
 class CLITests(unittest.TestCase):
@@ -52,6 +52,18 @@ class CLITests(unittest.TestCase):
         with patch.dict(os.environ, {"MODEM_PORT": "COM42", "QUECTEL_MODEM_PORT": "COM8"}):
             self.assertEqual(_default_port(), "COM42")
 
+    def test_default_port_uses_auto_without_env(self):
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(_default_port(), "auto")
+
+    def test_resolve_port_probes_when_auto(self):
+        args = args_for(port="auto", baud=9600, timeout=0.2)
+
+        with patch("cellular_modem.cli.detect_serial_port", return_value="COM9") as detect:
+            self.assertEqual(_resolve_port(args), "COM9")
+
+        detect.assert_called_once_with(baudrate=9600, timeout=0.2)
+
     def test_main_without_command_returns_usage_error(self):
         output = io.StringIO()
         with redirect_stdout(output):
@@ -73,6 +85,27 @@ class CLITests(unittest.TestCase):
         list_ports.assert_called_once_with()
         self.assertIn("COM8", output.getvalue())
 
+    def test_probe_handler_reports_responsive_ports(self):
+        args = args_for(json=False, port="auto", command="ATI")
+        fake_probe = SerialPortProbe(
+            device="COM8",
+            description="USB Serial Port",
+            hwid="USB",
+            responsive=True,
+            command="ATI",
+            final="OK",
+            lines=["Quectel"],
+        )
+
+        with patch("cellular_modem.cli.probe_serial_ports", return_value=[fake_probe]) as probe:
+            output = io.StringIO()
+            with redirect_stdout(output):
+                result = cli.cmd_probe(args)
+
+        self.assertEqual(result, 0)
+        probe.assert_called_once_with(ports=None, baudrate=115200, timeout=1.0, command="ATI")
+        self.assertIn("COM8", output.getvalue())
+
     def test_read_only_handlers_use_open_modem(self):
         fake = FakeCliModem()
         args = args_for(json=False)
@@ -82,7 +115,7 @@ class CLITests(unittest.TestCase):
             self.assertEqual(run_silent(cli.cmd_sim, args), 0)
             self.assertEqual(run_silent(cli.cmd_signal, args), 0)
 
-        self.assertEqual(fake.calls[:3], ["info", "sim_status", "signal_quality"])
+        self.assertEqual(fake.calls[:3], ["info", ("sim_info", False), "signal_quality"])
 
     def test_state_changing_handlers_return_success_for_ok_finals(self):
         fake = FakeCliModem()
@@ -143,6 +176,7 @@ class CLITests(unittest.TestCase):
             (cli.cmd_dtmf, args_for(dry_run=True, digits="123#")),
             (cli.cmd_audio_volume, args_for(dry_run=True, level=70)),
             (cli.cmd_audio_mute, args_for(dry_run=True, state="on")),
+            (cli.cmd_sms_mode, args_for(dry_run=True, mode="pdu")),
         ]
 
         with patch("cellular_modem.cli._open_modem", side_effect=AssertionError("opened modem")):
@@ -152,6 +186,16 @@ class CLITests(unittest.TestCase):
                     result = handler(args)
                 self.assertEqual(result, 0)
                 self.assertIn("dry_run: True", output.getvalue())
+
+    def test_sms_mode_handlers_query_and_set_mode(self):
+        fake = FakeCliModem()
+
+        with patched_modem(fake):
+            self.assertEqual(run_silent(cli.cmd_sms_mode, args_for(mode=None)), 0)
+            self.assertEqual(run_silent(cli.cmd_sms_mode, args_for(mode="pdu")), 0)
+
+        self.assertIn("sms_mode", fake.calls)
+        self.assertIn(("set_sms_mode", "pdu"), fake.calls)
 
 
 class FakeCliModem:
@@ -167,6 +211,10 @@ class FakeCliModem:
     def sim_status(self):
         self.calls.append("sim_status")
         return "READY"
+
+    def sim_info(self, show_sensitive=False):
+        self.calls.append(("sim_info", show_sensitive))
+        return {"status": "READY", "imsi": "46***01", "iccid": "89***45"}
 
     def signal_quality(self):
         self.calls.append("signal_quality")
@@ -219,6 +267,14 @@ class FakeCliModem:
         self.calls.append(("mute_microphone", enabled))
         return ATResponse(command="AT+CMUT", lines=[], final=self.call_final)
 
+    def sms_mode(self):
+        self.calls.append("sms_mode")
+        return "text"
+
+    def set_sms_mode(self, mode):
+        self.calls.append(("set_sms_mode", mode))
+        return ATResponse(command="AT+CMGF", lines=[], final=self.call_final)
+
     def enable_event_notifications(self):
         self.calls.append("enable_event_notifications")
 
@@ -249,6 +305,8 @@ def args_for(**overrides):
         "enable_events": False,
         "seconds": None,
         "dry_run": False,
+        "mode": "text",
+        "show_sensitive": False,
     }
     values.update(overrides)
     return SimpleNamespace(**values)

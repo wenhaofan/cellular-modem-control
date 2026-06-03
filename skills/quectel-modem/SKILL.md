@@ -12,16 +12,17 @@ description: Control local Quectel cellular communication modules over serial AT
    `python -m quectel_modem.cli ...` with `PYTHONPATH=src`, or the installed
    console script `modemctl ...`.
 2. Probe before changing state:
-   `modemctl ports`, then prefer `modemctl --port COM8 --profile quectel smoke
-   --json`. For narrower checks use `info`, `sim`, and `signal`.
+   `modemctl ports`, then `modemctl probe --json`, then prefer
+   `modemctl --port auto --profile quectel smoke --json`. For narrower checks
+   use `info`, `sim`, `signal`, and `sms-mode`.
 3. Do not send SMS, dial calls, answer calls, hang up calls, delete SMS, or
    change audio settings unless the user explicitly requested that action.
 4. Use `--dry-run` first for state-changing commands and raw AT commands when
    planning or reviewing an action. Dry-run output must not be treated as proof
    that the module supports the command.
-5. Use `--port COM8` for the user's Windows machine unless they provide another
-   port. For Linux/macOS use a detected `/dev/ttyUSB*`, `/dev/ttyACM*`, or
-   `/dev/cu.*` AT port.
+5. Use `--port auto` unless the user provides a specific port. If auto probing
+   is ambiguous, ask the user to choose from `modemctl ports` / `modemctl probe`
+   results such as `COM8`, `/dev/ttyUSB*`, `/dev/ttyACM*`, or `/dev/cu.*`.
 6. For Chinese or other non-ASCII SMS content, use `sms-send ... --encoding ucs2`
    or rely on `--encoding auto`.
 
@@ -31,34 +32,38 @@ Run from the repository root without installing:
 
 ```powershell
 $env:PYTHONPATH="src"
-python -m quectel_modem.cli --port COM8 info
+python -m quectel_modem.cli --port auto info
 ```
 
 Installed CLI examples:
 
 ```powershell
 modemctl ports
-modemctl --port COM8 info
-modemctl --port COM8 --profile quectel smoke --json
-modemctl --port COM8 sim
-modemctl --port COM8 signal
-modemctl --port COM8 raw "ATI"
-modemctl --port COM8 raw "AT+CFUN?" --dry-run
-modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
-modemctl --port COM8 sms-list
-modemctl --port COM8 sms-read 1
-modemctl --port COM8 sms-delete 1 --dry-run
-modemctl --port COM8 call-dial "+8613800138000" --dry-run
-modemctl --port COM8 call-answer --dry-run
-modemctl --port COM8 call-hangup --dry-run
-modemctl --port COM8 monitor --enable-events
+modemctl probe --json
+modemctl --port auto info
+modemctl --port auto --profile quectel smoke --json
+modemctl --port auto sim
+modemctl --port auto signal
+modemctl --port auto sms-mode
+modemctl --port auto sms-mode pdu --dry-run
+modemctl --port auto raw "ATI"
+modemctl --port auto raw "AT+CFUN?" --dry-run
+modemctl --port auto sms-send "+8613800138000" "test" --dry-run
+modemctl --port auto sms-list
+modemctl --port auto sms-read 1
+modemctl --port auto sms-delete 1 --dry-run
+modemctl --port auto call-dial "+8613800138000" --dry-run
+modemctl --port auto call-answer --dry-run
+modemctl --port auto call-hangup --dry-run
+modemctl --port auto monitor --enable-events
 ```
 
 Use `--json` when downstream parsing is useful.
 
-Only run the non-dry-run form of `sms-send`, `sms-delete`, `call-dial`,
-`call-answer`, `call-hangup`, `dtmf`, `audio-volume`, or `audio-mute` after the
-user explicitly asks for the live action.
+Only run the non-dry-run form of `sms-send`, `sms-delete`, `sms-mode text`,
+`sms-mode pdu`, `call-dial`, `call-answer`, `call-hangup`, `dtmf`,
+`audio-volume`, or `audio-mute` after the user explicitly asks for the live
+action.
 
 ## Voice Notes
 

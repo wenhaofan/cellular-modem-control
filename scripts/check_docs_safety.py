@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TARGET_FILES = [
     ROOT / "README.md",
     ROOT / "README.en.md",
+    ROOT / "docs" / "cli.md",
     ROOT / "docs" / "examples.md",
     ROOT / "skills" / "cellular-at-modem" / "SKILL.md",
     ROOT / "skills" / "quectel-modem" / "SKILL.md",
@@ -22,6 +23,7 @@ UNSAFE_MODEMCTL_COMMANDS = (
     "dtmf",
     "audio-volume",
     "audio-mute",
+    "sms-mode",
     "raw",
 )
 
@@ -63,12 +65,19 @@ def _needs_dry_run(line: str) -> bool:
     for command in UNSAFE_MODEMCTL_COMMANDS:
         if f" {command}" not in line:
             continue
+        if command == "sms-mode" and _is_safe_sms_mode_query(line):
+            return False
         return not (command == "raw" and _is_safe_raw_probe(line))
     return False
 
 
 def _is_safe_raw_probe(line: str) -> bool:
     return 'raw "ATI"' in line or "raw 'ATI'" in line or line.endswith(" raw ATI")
+
+
+def _is_safe_sms_mode_query(line: str) -> bool:
+    tokens = line.split()
+    return tokens and tokens[-1] == "sms-mode"
 
 
 def _relative(path: Path) -> str:

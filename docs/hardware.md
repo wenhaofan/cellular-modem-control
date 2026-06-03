@@ -12,11 +12,13 @@ Use:
 
 ```bash
 modemctl ports
+modemctl probe --json
 ```
 
 Then probe the likely AT port:
 
 ```bash
+modemctl --port auto info
 modemctl --port COM8 info
 modemctl --port /dev/ttyUSB2 info
 ```
@@ -24,7 +26,7 @@ modemctl --port /dev/ttyUSB2 info
 For a single read-only validation report:
 
 ```bash
-modemctl --port COM8 --profile generic smoke --json
+modemctl --port auto --profile generic smoke --json
 ```
 
 The smoke report redacts modem identifiers by default. Use `--show-sensitive`
@@ -37,7 +39,8 @@ using the module's AT port:
 
 ```bash
 modemctl ports
-modemctl --port COM8 --profile generic --json smoke
+modemctl probe --json
+modemctl --port auto --profile generic --json smoke
 ```
 
 Observed read-only result on 2026-05-31:
@@ -57,8 +60,10 @@ every firmware revision or carrier environment.
 These commands are read-only:
 
 - `info`
+- `probe`
 - `sim`
 - `signal`
+- `sms-mode` without a mode argument
 - `raw "ATI"`
 - `smoke`
 
@@ -66,6 +71,8 @@ These commands can change state or incur carrier charges:
 
 - `sms-send`
 - `sms-delete`
+- `sms-mode text`
+- `sms-mode pdu`
 - `call-dial`
 - `call-answer`
 - `call-hangup`

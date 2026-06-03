@@ -12,7 +12,7 @@ from typing import Any
 
 from .at import ATError, ATTimeout
 from .modem import Modem
-from .ports import list_serial_ports
+from .ports import SerialPortInfo, detect_serial_port, list_serial_ports, probe_serial_ports
 from .profiles import PROFILES
 from .smoke import report_to_dict, report_to_markdown, run_read_only_smoke
 
@@ -33,7 +33,11 @@ def main(argv: list[str] | None = None) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="modemctl", description="Control a cellular modem over AT serial.")
-    parser.add_argument("--port", default=_default_port(), help="Serial AT port. Defaults to COM8 on Windows.")
+    parser.add_argument(
+        "--port",
+        default=_default_port(),
+        help="Serial AT port, or 'auto' to probe visible ports. Defaults to MODEM_PORT or auto.",
+    )
     parser.add_argument(
         "--baud",
         type=int,
@@ -56,8 +60,11 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command")
 
     _add(subparsers, "ports", cmd_ports, "List serial ports.")
+    probe = _add(subparsers, "probe", cmd_probe, "Probe serial ports for an AT-responsive modem.")
+    probe.add_argument("--command", default="ATI", help="Read-only AT command used after the initial AT probe.")
     _add(subparsers, "info", cmd_info, "Show module identity.")
-    _add(subparsers, "sim", cmd_sim, "Show SIM PIN/ready status.")
+    sim = _add(subparsers, "sim", cmd_sim, "Show SIM status, IMSI/ICCID, operator, and subscriber numbers.")
+    sim.add_argument("--show-sensitive", action="store_true", help="Do not redact IMSI, ICCID, or phone numbers.")
     _add(subparsers, "signal", cmd_signal, "Show signal quality.")
 
     smoke = _add(subparsers, "smoke", cmd_smoke, "Run read-only hardware smoke checks.")
@@ -89,6 +96,10 @@ def build_parser() -> argparse.ArgumentParser:
     sms_delete = _add(subparsers, "sms-delete", cmd_sms_delete, "Delete an SMS by storage index.")
     sms_delete.add_argument("index", type=int)
     _add_dry_run(sms_delete)
+
+    sms_mode = _add(subparsers, "sms-mode", cmd_sms_mode, "Show or set SMS mode: text or PDU.")
+    sms_mode.add_argument("mode", nargs="?", choices=["text", "pdu"], help="Set SMS mode. Omit to query current mode.")
+    _add_dry_run(sms_mode)
 
     call_dial = _add(subparsers, "call-dial", cmd_call_dial, "Dial a voice call.")
     call_dial.add_argument("number")
@@ -140,6 +151,15 @@ def cmd_ports(args) -> int:
     return 0
 
 
+def cmd_probe(args) -> int:
+    ports = None
+    if args.port.lower() != "auto":
+        ports = [SerialPortInfo(device=args.port, description="explicit", hwid="")]
+    probes = probe_serial_ports(ports=ports, baudrate=args.baud, timeout=args.timeout, command=args.command)
+    _print(probes, args.json)
+    return 0 if any(probe.responsive for probe in probes) else 1
+
+
 def cmd_info(args) -> int:
     with _open_modem(args) as modem:
         _print(modem.info(), args.json)
@@ -148,7 +168,7 @@ def cmd_info(args) -> int:
 
 def cmd_sim(args) -> int:
     with _open_modem(args) as modem:
-        _print({"sim": modem.sim_status()}, args.json)
+        _print(modem.sim_info(show_sensitive=args.show_sensitive), args.json)
     return 0
 
 
@@ -159,8 +179,9 @@ def cmd_signal(args) -> int:
 
 
 def cmd_smoke(args) -> int:
+    port = _resolve_port(args)
     report = run_read_only_smoke(
-        port=args.port,
+        port=port,
         profile=args.profile,
         baudrate=args.baud,
         timeout=args.timeout,
@@ -218,6 +239,19 @@ def cmd_sms_delete(args) -> int:
     with _open_modem(args) as modem:
         modem.delete_sms(args.index)
     print(f"deleted SMS index {args.index}")
+    return 0
+
+
+def cmd_sms_mode(args) -> int:
+    if args.mode:
+        if args.dry_run:
+            return _dry_run(args, "sms-mode", mode=args.mode)
+        with _open_modem(args) as modem:
+            response = modem.set_sms_mode(args.mode)
+            _print({"mode": args.mode, "final": response.final, "lines": response.lines}, args.json)
+        return 0 if response.final == "OK" else 1
+    with _open_modem(args) as modem:
+        _print({"sms_mode": modem.sms_mode()}, args.json)
     return 0
 
 
@@ -292,13 +326,20 @@ def cmd_monitor(args) -> int:
 
 @contextmanager
 def _open_modem(args):
-    modem = Modem(port=args.port, baudrate=args.baud, timeout=args.timeout, profile=args.profile).open()
+    modem = Modem(port=_resolve_port(args), baudrate=args.baud, timeout=args.timeout, profile=args.profile).open()
     try:
         if not args.no_init:
             modem.initialize()
         yield modem
     finally:
         modem.close()
+
+
+def _resolve_port(args) -> str:
+    port = args.port
+    if port and port.lower() != "auto":
+        return port
+    return detect_serial_port(baudrate=args.baud, timeout=args.timeout)
 
 
 def _dry_run(args, action: str, **details: Any) -> int:
@@ -346,7 +387,7 @@ def _default_port() -> str:
     configured = os.getenv("MODEM_PORT") or os.getenv("QUECTEL_MODEM_PORT")
     if configured:
         return configured
-    return "COM8" if os.name == "nt" else "/dev/ttyUSB2"
+    return "auto"
 
 
 if __name__ == "__main__":

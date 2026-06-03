@@ -12,8 +12,10 @@
 它，让本地蜂窝模块具备真实手机号的短信收发、拨号、接听、挂断、DTMF 和事件
 监听能力。
 
-Windows 默认端口是 `COM8`。Linux/macOS 可以使用 `/dev/ttyUSB2`、
-`/dev/ttyACM0`、`/dev/cu.usbserial-*` 等实际 AT 端口。
+CLI 默认使用 `--port auto` 主动探测可响应 AT 指令的串口。也可以先用
+`modemctl ports` 枚举系统端口，再用 `modemctl probe` 验证哪个端口是实际 AT
+控制口；`COM8`、`/dev/ttyUSB2`、`/dev/ttyACM0`、`/dev/cu.usbserial-*` 都只是
+常见示例，不是固定默认值。
 
 ## 项目状态
 
@@ -62,8 +64,9 @@ python scripts/install_skills.py --skill quectel-modem
 
 这些能力基于常见 Hayes/3GPP 风格 AT 指令：
 
-- 查询模块身份、SIM 状态、网络信号和 raw AT 指令。
-- 以文本模式发送、列出、读取和删除短信。
+- 枚举串口并主动探测可响应 AT 的 modem 端口。
+- 查询模块身份、SIM 状态、IMSI/ICCID、运营商、网络信号和 raw AT 指令。
+- 查询和切换 SMS text/PDU 模式；文本模式下发送、列出、读取和删除短信。
 - 使用 UCS2 编码发送中文等非 ASCII 短信。
 - 拨号、接听、挂断、列出通话和发送 DTMF。
 - 监听来电、新短信等 unsolicited modem events。
@@ -91,32 +94,38 @@ DTMF modem, serial modem automation.
 只读硬件验证，适合作为 issue 或兼容性报告：
 
 ```powershell
-modemctl --port COM8 --profile generic smoke --json
-modemctl --port COM8 --profile generic info
-modemctl --port COM8 signal
+modemctl ports
+modemctl probe --json
+modemctl --port auto --profile generic smoke --json
+modemctl --port auto --profile generic info
+modemctl --port auto sim
+modemctl --port auto signal
+modemctl --port auto sms-mode
 ```
 
 给 agent 预览短信、拨号和 DTMF 动作：
 
 ```powershell
-modemctl --port COM8 sms-send "+8613800138000" "Codex task finished" --dry-run
-modemctl --port COM8 call-dial "+8613800138000" --dry-run
-modemctl --port COM8 dtmf "123#" --dry-run
-modemctl --port COM8 call-hangup --dry-run
+modemctl --port auto sms-send "+8613800138000" "Codex task finished" --dry-run
+modemctl --port auto call-dial "+8613800138000" --dry-run
+modemctl --port auto dtmf "123#" --dry-run
+modemctl --port auto call-hangup --dry-run
+modemctl --port auto sms-mode pdu --dry-run
 ```
 
 监听来电和新短信事件：
 
 ```powershell
-modemctl --port COM8 monitor --enable-events
+modemctl --port auto monitor --enable-events
 ```
 
 Python 只读 smoke 示例：
 
 ```python
-from cellular_modem import report_to_markdown, run_read_only_smoke
+from cellular_modem import detect_serial_port, report_to_markdown, run_read_only_smoke
 
-report = run_read_only_smoke(port="COM8", profile="generic")
+port = detect_serial_port()
+report = run_read_only_smoke(port=port, profile="generic")
 print(report_to_markdown(report))
 ```
 
@@ -144,19 +153,21 @@ CLI 默认使用 `--profile generic`。当模块需要厂商特定扩展时，�
 ```powershell
 python -m pip install -e .
 modemctl ports
-modemctl --port COM8 --profile generic smoke --json
-modemctl --port COM8 --profile generic info
-modemctl --port COM8 signal
-modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
-modemctl --port COM8 call-dial "+8613800138000" --dry-run
-modemctl --port COM8 call-hangup --dry-run
+modemctl probe
+modemctl --port auto --profile generic smoke --json
+modemctl --port auto --profile generic info
+modemctl --port auto sim
+modemctl --port auto signal
+modemctl --port auto sms-send "+8613800138000" "test" --dry-run
+modemctl --port auto call-dial "+8613800138000" --dry-run
+modemctl --port auto call-hangup --dry-run
 ```
 
 不安装包时，可以在仓库根目录直接运行：
 
 ```powershell
 $env:PYTHONPATH="src"
-python -m cellular_modem.cli --port COM8 info
+python -m cellular_modem.cli --port auto info
 ```
 
 旧入口 `python -m quectel_modem.cli ...` 仍保留为兼容别名。
@@ -182,18 +193,24 @@ python -m cellular_modem.cli --port COM8 info
 
 ```powershell
 modemctl ports
-modemctl --port COM8 raw "ATI"
-modemctl --port COM8 smoke --json
-modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
-modemctl --port COM8 sms-send "+8613800138000" "中文测试" --encoding ucs2 --dry-run
-modemctl --port COM8 sms-list
-modemctl --port COM8 sms-read 1
-modemctl --port COM8 sms-delete 1 --dry-run
-modemctl --port COM8 call-answer --dry-run
-modemctl --port COM8 dtmf "123#" --dry-run
-modemctl --port COM8 audio-volume 70 --dry-run
-modemctl --port COM8 audio-mute on --dry-run
-modemctl --port COM8 monitor --enable-events
+modemctl probe
+modemctl --port auto raw "ATI"
+modemctl --port auto smoke --json
+modemctl --port auto sim --json
+modemctl --port auto sim --show-sensitive --json
+modemctl --port auto sms-mode
+modemctl --port auto sms-mode text --dry-run
+modemctl --port auto sms-mode pdu --dry-run
+modemctl --port auto sms-send "+8613800138000" "test" --dry-run
+modemctl --port auto sms-send "+8613800138000" "中文测试" --encoding ucs2 --dry-run
+modemctl --port auto sms-list
+modemctl --port auto sms-read 1
+modemctl --port auto sms-delete 1 --dry-run
+modemctl --port auto call-answer --dry-run
+modemctl --port auto dtmf "123#" --dry-run
+modemctl --port auto audio-volume 70 --dry-run
+modemctl --port auto audio-mute on --dry-run
+modemctl --port auto monitor --enable-events
 ```
 
 ## 安全边界
@@ -205,10 +222,10 @@ modemctl --port COM8 monitor --enable-events
 `dtmf`、`audio-volume`、`audio-mute` 等会改变状态的命令，先使用 `--dry-run`
 预览操作。dry-run 不会打开串口。
 
-使用 `modemctl --port COM8 smoke --json` 生成只读硬件验证报告。该报告会执行
-open/init/info/SIM/signal/ATI 检查，并默认脱敏 modem 标识符。
+使用 `modemctl --port auto smoke --json` 生成只读硬件验证报告。该报告会先探测
+AT 端口，再执行 open/init/info/SIM/signal/ATI 检查，并默认脱敏 modem 标识符。
 
-提交 issue 时，建议使用 `modemctl --port COM8 smoke --format markdown`。
+提交 issue 时，建议使用 `modemctl --port auto smoke --format markdown`。
 
 ## 开发
 

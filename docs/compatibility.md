@@ -44,16 +44,19 @@ the common baseline and vendor profiles as documented exceptions.
 | Operation | Generic profile expectation | Common source of variation |
 | --- | --- | --- |
 | Module identity | `ATI`, `AT+CGMI`, `AT+CGMM`, `AT+CGMR`, `AT+CGSN` | Identifier formatting and firmware strings. |
-| SIM status | `AT+CPIN?` | PIN states, SIM storage, carrier provisioning. |
+| Port probing | `AT`, `ATI` after pyserial port enumeration | Multi-interface USB modules, debug/NMEA ports, non-modem serial devices. |
+| SIM information | `AT+CPIN?`, `AT+CIMI`, `AT+CCID`, `AT+COPS?`, `AT+CNUM` | Identifier redaction, unsupported ICCID or phone-number commands, carrier provisioning. |
 | Signal quality | `AT+CSQ` | RSSI mapping, LTE/5G extended metrics. |
-| SMS text mode | `AT+CMGF`, `AT+CSCS`, `AT+CMGS`, `AT+CMGL`, `AT+CMGR`, `AT+CMGD` | Storage selection, UCS2 handling, PDU-only modules. |
+| SMS text mode | `AT+CMGF=1`, `AT+CSCS`, `AT+CMGS`, `AT+CMGL`, `AT+CMGR`, `AT+CMGD` | Storage selection and UCS2 handling. |
+| SMS PDU mode | `AT+CMGF=0` | Full PDU encoding/decoding is not yet a high-level helper; use `raw` or add parser support. |
 | Basic call state | `ATD`, `ATA`, `ATH`, `AT+CLCC` | Voice service availability and carrier restrictions. |
 | DTMF and audio controls | `AT+VTS`, `AT+CLVL`, `AT+CMUT` | Often vendor-specific or unsupported. |
 | Live call audio | Outside the serial AT stream | USB Audio, PCM/I2S, or analog wiring. |
 
 ## Adding Compatibility
 
-1. Start with `modemctl --port <port> --profile generic smoke --format markdown`.
+1. Start with `modemctl probe --json`, then
+   `modemctl --port auto --profile generic smoke --format markdown`.
 2. Keep identifiers and carrier data redacted.
 3. Use `modemctl raw "<command>" --dry-run` when discussing a command plan.
 4. Add parser or command tests before changing the generic profile.

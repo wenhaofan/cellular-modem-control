@@ -20,7 +20,7 @@ Before publishing a release:
    If a modem is available, also run a read-only smoke check:
 
    ```bash
-   modemctl --port COM8 --profile generic smoke --json
+   modemctl --port auto --profile generic smoke --json
    ```
 
 5. Confirm the distribution content check passes:

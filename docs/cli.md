@@ -6,13 +6,13 @@ Global options must appear before the command unless a command explicitly
 documents otherwise:
 
 ```bash
-modemctl --port COM8 --profile generic info
+modemctl --port auto --profile generic info
 ```
 
 ## Global Options
 
-- `--port`: serial AT port. Defaults to `COM8` on Windows and `/dev/ttyUSB2`
-  elsewhere. Can also be set with `MODEM_PORT`.
+- `--port`: serial AT port, or `auto` to actively probe visible ports for an
+  AT-responsive modem. Defaults to `MODEM_PORT` when set, otherwise `auto`.
 - `--baud`: serial baud rate. Defaults to `115200`. Can also be set with
   `MODEM_BAUD`.
 - `--timeout`: serial read timeout in seconds. Defaults to `1.0`. Can also be
@@ -31,12 +31,15 @@ These commands are safe for automated smoke checks:
 
 ```bash
 modemctl ports
-modemctl --port COM8 smoke --json
-modemctl --port COM8 info
-modemctl --port COM8 sim
-modemctl --port COM8 signal
-modemctl --port COM8 raw "ATI"
-modemctl --port COM8 raw "AT+CFUN?" --dry-run
+modemctl probe --json
+modemctl --port auto smoke --json
+modemctl --port auto info
+modemctl --port auto sim
+modemctl --port auto sim --show-sensitive --json
+modemctl --port auto signal
+modemctl --port auto sms-mode
+modemctl --port auto raw "ATI"
+modemctl --port auto raw "AT+CFUN?" --dry-run
 ```
 
 `smoke` opens the port once, initializes the modem, runs `info`, `sim`,
@@ -44,7 +47,13 @@ modemctl --port COM8 raw "AT+CFUN?" --dry-run
 identifiers by default. Use `--show-sensitive` only for private local debugging.
 
 `ports` uses the same serial port discovery API exposed as
-`cellular_modem.list_serial_ports()`.
+`cellular_modem.list_serial_ports()`. `probe` actively opens candidate ports,
+sends `AT`, then sends a read-only identity command such as `ATI`.
+
+`sim` returns SIM readiness, IMSI, ICCID, operator information, and subscriber
+numbers when the modem supports the underlying AT commands. IMSI, ICCID, and
+phone numbers are redacted by default; pass `--show-sensitive` only for private
+local debugging.
 
 Raw AT commands can be read-only or state-changing depending on the command.
 Use `raw --dry-run` when collecting or reviewing command plans before touching
@@ -53,34 +62,39 @@ hardware.
 For issue reports, prefer Markdown:
 
 ```bash
-modemctl --port COM8 smoke --format markdown
+modemctl --port auto smoke --format markdown
 ```
 
 ## SMS Commands
 
 ```bash
-modemctl --port COM8 sms-send "+1234567890" "hello"
-modemctl --port COM8 sms-send "+1234567890" "hello" --dry-run
-modemctl --port COM8 sms-send "+1234567890" "你好" --encoding ucs2
-modemctl --port COM8 sms-list
-modemctl --port COM8 sms-read 1
-modemctl --port COM8 sms-delete 1
-modemctl --port COM8 sms-delete 1 --dry-run
+modemctl --port auto sms-mode
+modemctl --port auto sms-mode text --dry-run
+modemctl --port auto sms-mode pdu --dry-run
+modemctl --port auto sms-send "+1234567890" "hello" --dry-run
+modemctl --port auto sms-send "+1234567890" "你好" --encoding ucs2 --dry-run
+modemctl --port auto sms-list
+modemctl --port auto sms-read 1
+modemctl --port auto sms-delete 1 --dry-run
 ```
 
-`sms-send` and `sms-delete` are state-changing. They may incur charges or remove
-messages from modem storage. Use `--dry-run` to print the intended operation
-without opening the modem.
+`sms-mode` without an argument queries `AT+CMGF?`. With `text` or `pdu`, it sets
+`AT+CMGF=1` or `AT+CMGF=0`; use `--dry-run` while reviewing plans. The high-level
+send/list/read helpers currently implement text mode. Use `raw` for vendor or
+PDU-specific experiments before adding a parser.
+
+`sms-send`, `sms-delete`, and `sms-mode text|pdu` are state-changing. Sending SMS
+may incur charges and deleting SMS removes messages from modem storage. Use
+`--dry-run` to print the intended operation without opening the modem.
 
 ## Call Commands
 
 ```bash
-modemctl --port COM8 call-dial "+1234567890"
-modemctl --port COM8 call-dial "+1234567890" --dry-run
-modemctl --port COM8 call-answer
-modemctl --port COM8 call-hangup
-modemctl --port COM8 call-list
-modemctl --port COM8 dtmf "123#"
+modemctl --port auto call-dial "+1234567890" --dry-run
+modemctl --port auto call-answer --dry-run
+modemctl --port auto call-hangup --dry-run
+modemctl --port auto call-list
+modemctl --port auto dtmf "123#" --dry-run
 ```
 
 `call-dial`, `call-answer`, `call-hangup`, and `dtmf` affect live call state.
@@ -89,10 +103,9 @@ They support `--dry-run`.
 ## Audio Control Commands
 
 ```bash
-modemctl --port COM8 audio-volume 70
-modemctl --port COM8 audio-volume 70 --dry-run
-modemctl --port COM8 audio-mute on
-modemctl --port COM8 audio-mute off
+modemctl --port auto audio-volume 70 --dry-run
+modemctl --port auto audio-mute on --dry-run
+modemctl --port auto audio-mute off --dry-run
 ```
 
 These use common AT commands when supported by the module. Live call audio is
@@ -101,8 +114,8 @@ not transported through the serial AT port. They support `--dry-run`.
 ## Event Monitoring
 
 ```bash
-modemctl --port COM8 monitor --enable-events
-modemctl --port COM8 monitor --seconds 30
+modemctl --port auto monitor --enable-events
+modemctl --port auto monitor --seconds 30
 ```
 
 `monitor` prints unsolicited modem lines such as incoming call and SMS

@@ -34,10 +34,11 @@ Run only on a machine with a known AT command port:
 
 ```bash
 modemctl ports
-modemctl --port COM8 --profile generic --json smoke
-modemctl --port COM8 --profile generic --json info
-modemctl --port COM8 --profile generic --json sim
-modemctl --port COM8 --profile generic --json signal
+modemctl probe --json
+modemctl --port auto --profile generic --json smoke
+modemctl --port auto --profile generic --json info
+modemctl --port auto --profile generic --json sim
+modemctl --port auto --profile generic --json signal
 ```
 
 Prefer `smoke` for issue reports because it opens the port once and redacts
@@ -46,7 +47,7 @@ modem identifiers by default.
 For copy-pasteable issue output:
 
 ```bash
-modemctl --port COM8 --profile generic smoke --format markdown
+modemctl --port auto --profile generic smoke --format markdown
 ```
 
 Do not include state-changing commands in automated CI:

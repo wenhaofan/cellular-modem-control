@@ -12,8 +12,11 @@ Python API, or a local skill wrapper to give a cellular module real phone-number
 capabilities: SMS, dialing, answering, hanging up, DTMF, and modem event
 monitoring.
 
-The default Windows port is `COM8`. Override it for Linux/macOS devices such as
-`/dev/ttyUSB2`, `/dev/ttyACM0`, or `/dev/cu.usbserial-*`.
+The CLI defaults to `--port auto` and actively probes for an AT-responsive
+serial port. You can also run `modemctl ports` to list system ports and
+`modemctl probe` to verify which one is the actual AT control port. `COM8`,
+`/dev/ttyUSB2`, `/dev/ttyACM0`, and `/dev/cu.usbserial-*` are common examples,
+not fixed defaults.
 
 ## Project Status
 
@@ -63,8 +66,11 @@ Python API.
 
 These operations are implemented with common Hayes/3GPP-style AT commands:
 
-- Probe module identity, SIM/network signal, and raw AT commands.
-- Send, list, read, and delete SMS messages in text mode.
+- Enumerate serial ports and actively probe for AT-responsive modem ports.
+- Probe module identity, SIM status, IMSI/ICCID, operator, network signal, and
+  raw AT commands.
+- Query and switch SMS text/PDU mode; send, list, read, and delete SMS messages
+  in text mode.
 - Use UCS2 SMS encoding for non-ASCII text such as Chinese.
 - Dial, answer, hang up, list active calls, and send DTMF.
 - Monitor unsolicited modem events such as incoming calls and new SMS notices.
@@ -93,32 +99,38 @@ DTMF modem, serial modem automation.
 Read-only hardware validation for issues or compatibility reports:
 
 ```powershell
-modemctl --port COM8 --profile generic smoke --json
-modemctl --port COM8 --profile generic info
-modemctl --port COM8 signal
+modemctl ports
+modemctl probe --json
+modemctl --port auto --profile generic smoke --json
+modemctl --port auto --profile generic info
+modemctl --port auto sim
+modemctl --port auto signal
+modemctl --port auto sms-mode
 ```
 
 Preview SMS, dialing, and DTMF actions for an agent workflow:
 
 ```powershell
-modemctl --port COM8 sms-send "+8613800138000" "Codex task finished" --dry-run
-modemctl --port COM8 call-dial "+8613800138000" --dry-run
-modemctl --port COM8 dtmf "123#" --dry-run
-modemctl --port COM8 call-hangup --dry-run
+modemctl --port auto sms-send "+8613800138000" "Codex task finished" --dry-run
+modemctl --port auto call-dial "+8613800138000" --dry-run
+modemctl --port auto dtmf "123#" --dry-run
+modemctl --port auto call-hangup --dry-run
+modemctl --port auto sms-mode pdu --dry-run
 ```
 
 Monitor incoming calls and new SMS events:
 
 ```powershell
-modemctl --port COM8 monitor --enable-events
+modemctl --port auto monitor --enable-events
 ```
 
 Python read-only smoke example:
 
 ```python
-from cellular_modem import report_to_markdown, run_read_only_smoke
+from cellular_modem import detect_serial_port, report_to_markdown, run_read_only_smoke
 
-report = run_read_only_smoke(port="COM8", profile="generic")
+port = detect_serial_port()
+report = run_read_only_smoke(port=port, profile="generic")
 print(report_to_markdown(report))
 ```
 
@@ -148,19 +160,21 @@ audio interface according to the exact module datasheet.
 ```powershell
 python -m pip install -e .
 modemctl ports
-modemctl --port COM8 --profile generic smoke --json
-modemctl --port COM8 --profile generic info
-modemctl --port COM8 signal
-modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
-modemctl --port COM8 call-dial "+8613800138000" --dry-run
-modemctl --port COM8 call-hangup --dry-run
+modemctl probe
+modemctl --port auto --profile generic smoke --json
+modemctl --port auto --profile generic info
+modemctl --port auto sim
+modemctl --port auto signal
+modemctl --port auto sms-send "+8613800138000" "test" --dry-run
+modemctl --port auto call-dial "+8613800138000" --dry-run
+modemctl --port auto call-hangup --dry-run
 ```
 
 Without installing the package, run from this repository:
 
 ```powershell
 $env:PYTHONPATH="src"
-python -m cellular_modem.cli --port COM8 info
+python -m cellular_modem.cli --port auto info
 ```
 
 The older `python -m quectel_modem.cli ...` entry point is kept as a compatibility
@@ -187,18 +201,24 @@ alias.
 
 ```powershell
 modemctl ports
-modemctl --port COM8 raw "ATI"
-modemctl --port COM8 smoke --json
-modemctl --port COM8 sms-send "+8613800138000" "test" --dry-run
-modemctl --port COM8 sms-send "+8613800138000" "Chinese text" --encoding ucs2 --dry-run
-modemctl --port COM8 sms-list
-modemctl --port COM8 sms-read 1
-modemctl --port COM8 sms-delete 1 --dry-run
-modemctl --port COM8 call-answer --dry-run
-modemctl --port COM8 dtmf "123#" --dry-run
-modemctl --port COM8 audio-volume 70 --dry-run
-modemctl --port COM8 audio-mute on --dry-run
-modemctl --port COM8 monitor --enable-events
+modemctl probe
+modemctl --port auto raw "ATI"
+modemctl --port auto smoke --json
+modemctl --port auto sim --json
+modemctl --port auto sim --show-sensitive --json
+modemctl --port auto sms-mode
+modemctl --port auto sms-mode text --dry-run
+modemctl --port auto sms-mode pdu --dry-run
+modemctl --port auto sms-send "+8613800138000" "test" --dry-run
+modemctl --port auto sms-send "+8613800138000" "Chinese text" --encoding ucs2 --dry-run
+modemctl --port auto sms-list
+modemctl --port auto sms-read 1
+modemctl --port auto sms-delete 1 --dry-run
+modemctl --port auto call-answer --dry-run
+modemctl --port auto dtmf "123#" --dry-run
+modemctl --port auto audio-volume 70 --dry-run
+modemctl --port auto audio-mute on --dry-run
+modemctl --port auto monitor --enable-events
 ```
 
 ## Safety
@@ -210,11 +230,11 @@ Use `--dry-run` on state-changing commands such as `sms-send`, `sms-delete`,
 `call-dial`, `call-answer`, `call-hangup`, `dtmf`, `audio-volume`, and
 `audio-mute` to preview the operation without opening the serial port.
 
-Use `modemctl --port COM8 smoke --json` for a read-only hardware validation
-report. It runs open/init/info/SIM/signal/ATI checks and redacts modem
-identifiers by default.
+Use `modemctl --port auto smoke --json` for a read-only hardware validation
+report. It detects the AT port, runs open/init/info/SIM/signal/ATI checks, and
+redacts modem identifiers by default.
 
-For issue reports, use `modemctl --port COM8 smoke --format markdown`.
+For issue reports, use `modemctl --port auto smoke --format markdown`.
 
 ## Development
 

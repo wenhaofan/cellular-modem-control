@@ -33,8 +33,11 @@ class FakeSmokeModem:
             "imei": "123456789012345",
         }
 
-    def sim_status(self):
-        return "READY"
+    def sim_info(self, show_sensitive=False):
+        value = {"status": "READY", "imsi": "460001234567890", "iccid": "89860012345678901234"}
+        if show_sensitive:
+            return value
+        return {"status": "READY", "imsi": "46***90", "iccid": "89***34"}
 
     def signal_quality(self):
         return {"rssi": 25, "dbm": -63, "ber": 99}

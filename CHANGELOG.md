@@ -22,6 +22,11 @@ versioning once public releases begin.
 - CLI command `modemctl` for port listing, module information, SIM status,
   signal quality, SMS, call control, DTMF, audio controls, event monitoring,
   and raw AT commands.
+- Active serial AT port probing with `modemctl probe` and `--port auto`.
+- SIM information output for status, IMSI, ICCID, operator, and subscriber
+  numbers with default redaction.
+- SMS text/PDU mode query and dry-run-safe mode switching through
+  `modemctl sms-mode`.
 - Read-only `modemctl smoke` hardware validation report with default identifier
   redaction.
 - Markdown smoke report output for issue attachments.

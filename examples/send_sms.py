@@ -8,14 +8,14 @@ from __future__ import annotations
 
 import argparse
 
-from cellular_modem import Modem
+from cellular_modem import Modem, detect_serial_port
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Send one SMS through an AT-command modem.")
     parser.add_argument("number")
     parser.add_argument("text")
-    parser.add_argument("--port", default="COM8")
+    parser.add_argument("--port", default="auto")
     parser.add_argument("--profile", default="generic")
     parser.add_argument("--baudrate", type=int, default=115200)
     parser.add_argument("--timeout", type=float, default=1.0)
@@ -28,7 +28,8 @@ def main() -> int:
         print(f"encoding: {args.encoding}\ntext_length: {len(args.text)}")
         return 0
 
-    with Modem(port=args.port, baudrate=args.baudrate, timeout=args.timeout, profile=args.profile) as modem:
+    port = detect_serial_port(baudrate=args.baudrate, timeout=args.timeout) if args.port == "auto" else args.port
+    with Modem(port=port, baudrate=args.baudrate, timeout=args.timeout, profile=args.profile) as modem:
         modem.initialize()
         reference = modem.send_sms(args.number, args.text, encoding=args.encoding)
 
